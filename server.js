@@ -20,6 +20,9 @@ if(process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
+// Body Parser, inicializador:
+app.use(express.json());
+
 // Configuração das rotas, assim não precisamos deixar a URL completa lá:
 app.use('/api/v1/bootcamps', bootcamps);
 
