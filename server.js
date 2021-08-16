@@ -4,6 +4,7 @@ const bootcamps = require('./routes/bootcamps'); // Arquivo de rotas.
 //const logger = require('./middleware/logger'); // Apenas um exemplo de log, simples demonstração de middleware.
 const morgan = require('morgan');
 const connectDb = require('./config/db');
+const errorHandler = require('./middleware/error');
 
 // Carregando as variáveis do projeto:
 dotenv.config({ path: './config/config.env' });
@@ -26,6 +27,8 @@ app.use(express.json());
 // Configuração das rotas, assim não precisamos deixar a URL completa lá:
 app.use('/api/v1/bootcamps', bootcamps);
 
+// Error handler customizado, é importante que ele seja o último, pois o 'use' cria uma fila de middlewares para serem executados, e o errorHandler deve ser capaz de pegar o erro de qualquer função executada anteriormente:
+app.use(errorHandler);
 
 const server = app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}, in the ${process.env.NODE_ENV} enviroment`);
