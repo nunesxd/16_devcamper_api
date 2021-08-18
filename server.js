@@ -1,13 +1,13 @@
-const express = require('express');
 const dotenv = require('dotenv');
+// Carregando as variáveis do projeto:
+dotenv.config({ path: './config/config.env' });
+
+const express = require('express');
 const bootcamps = require('./routes/bootcamps'); // Arquivo de rotas.
 //const logger = require('./middleware/logger'); // Apenas um exemplo de log, simples demonstração de middleware.
 const morgan = require('morgan');
 const connectDb = require('./config/db');
 const errorHandler = require('./middleware/error');
-
-// Carregando as variáveis do projeto:
-dotenv.config({ path: './config/config.env' });
 
 // Conexão a base de dados:
 connectDb();
