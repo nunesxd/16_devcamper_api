@@ -7,7 +7,9 @@ dotenv.config({ path: '../config/config.env' });
 
 const fs = require('fs');
 const mongoose = require('mongoose');
-const Bootcamps = require('../models/Bootcamp');
+
+const Bootcamp = require('../models/Bootcamp');
+const Course = require('../models/Course');
 
 // Conecta com o DB:
 mongoose.connect(process.env.MONGO_URI, {
@@ -19,12 +21,14 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // Lê os arquivos JSON para fazer o carregamento no BD:
 const bootcamps = JSON.parse(fs.readFileSync(`${__dirname}/../_data/bootcamps.json`, 'utf-8'));
+const courses = JSON.parse(fs.readFileSync(`${__dirname}/../_data/courses.json`, 'utf-8'));
 
 // Importa o 'seed' em nosso DB:
 const importData = async () => {
     try {
-        await Bootcamps.create(bootcamps);
-        console.log('Bootcamps imported successfully !');
+        await Bootcamp.create(bootcamps);
+        await Course.create(courses);
+        console.log('Dados importados com sucesso !');
         process.exit();
     } catch (err) {
         console.log(err);
@@ -34,8 +38,9 @@ const importData = async () => {
 // Destroi os dados do banco, caso queiramos:
 const deleteData = async () => {
     try {
-        await Bootcamps.deleteMany();
-        console.log('Bootcamps deleted successfully !');
+        await Bootcamp.deleteMany();
+        await Course.deleteMany();
+        console.log('Dados deletados com sucesso !');
         process.exit();
     } catch (err) {
         console.log(err);

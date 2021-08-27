@@ -11,16 +11,73 @@ const geocoder = require('../utils/geocoder');
 // @route   GET /api/v1/bootcamps;
 // @access  Public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-    /* Podemos usar query dentro da URL (separando os campos com '?'), nesta rota especifica, para que o mongoose use no find() abaixo.
-    Entretanto, cabe mencionar que algumas querys mais complexas precisam de uma "tradução" para serem usadas com o JSON. Por exemplo, devemos inserir o caractere '$' em casos de "menor do que X valor", pois o mongoose não realiza tal procedimento, e considera que o calor informado é uma ID.*/
-    let queryStr = JSON.stringify(req.query);
+    /* Podemos usar queries dentro da URL (separando os campos com '?'), para que o mongoose use no find() abaixo.
+    Cabe mencionar, que estas queries precisam de uma "tradução" para serem usadas pelo JSON, por exemplo, devemos inserir o caractere '$' em casos de "menor do que X valor", pois o mongoose não realiza tal procedimento, e considera que o valor informado é uma ID, causando erro.
+    Para os casos como o select e sort, como estes não são campos do schema, devemos retirá-los da query principal (que apenas realiza os matches por campo), eles seria separados, e incindiriam nos bootcamps encontrados pelo GET. Caso não tenha um select e sort na URL, o GET funcionaria normalmente.*/
+    let query;
 
-    // Estamos pegando os comandos abaixo, ex: gt - greater than, gte - grater than and equal.
+    const reqQuery = { ...req.query };
+
+    // Remoção dos parâmetros que não queremos em nosso find, estas serão tratadas separadamente mais abaixo:
+    const removeFields = ['select', 'sort', 'page', 'limit'];
+    removeFields.forEach(field => delete reqQuery[field]);
+
+    let queryStr = JSON.stringify(reqQuery);
+
+    // Estamos pegando os comandos abaixo e colocando um '$' antes, ex: gt - greater than, gte - grater than and equal.
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/, match => '$' + match);
     
-    const bootcamps = await Bootcamp.find(JSON.parse(queryStr));
+    query = Bootcamp.find(JSON.parse(queryStr));
+    
+    // Para os casos de SELECT, os campos a serem selecionados serão separados com uma ',', e não por espaços (que é necessário para o mongoose), para isso:
+    if(req.query.select) {
+        const selectFields = req.query.select.replace(',', " ");
+        query = query.select(selectFields); // 'query' é um objeto do mongoose contendo bootcamps, selecionamos apenas os campos contidos no 'select';
+    }
 
-    res.status(201).json({ success: true, count: bootcamps.length, data: bootcamps });
+    // Para os casos de SORT:
+    if(req.query.sort) {
+        const sortFields = req.query.sort.replace(',', " ");
+        query = query.sort(sortFields);
+    } else {
+        // Usaremos um sort padrão, por data:
+        // OBS: O '-' é para descending, '+' para ascending.
+        query = query.sort('-createdAt');
+    }
+
+    // Paginação:
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 100;
+    const startIndex = (page-1) * limit; // caso tenhamos mais paginas, separemos os recursos adequadamente por elas.
+    const endIndex = page * limit;
+    const totalDoc = await Bootcamp.countDocuments();
+
+    query = query.skip(startIndex).limit(limit);
+
+    const bootcamps = await query;
+
+    // Resultado da paginação, que ficará dentro do JSON de resultado abaixo:
+    const pagination = {};
+
+    // Se tiver uma próxima página, mostre:
+    if(endIndex < totalDoc) {
+        pagination.nextPage = {
+            page: page + 1,
+            limit,
+            totalDoc
+        }
+    }
+
+    // Se tiver uma página anterior, mostre:
+    if(startIndex > 0) {
+        pagination.prevPage = {
+            page: page - 1,
+            limit,
+            totalDoc
+        }
+    }
+
+    res.status(201).json({ success: true, count: bootcamps.length, pagination, data: bootcamps });
 });
 
 // @desc    Obtem apenas um bootcamp;
