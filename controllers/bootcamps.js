@@ -27,7 +27,8 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
     // Estamos pegando os comandos abaixo e colocando um '$' antes, ex: gt - greater than, gte - grater than and equal.
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/, match => '$' + match);
     
-    query = Bootcamp.find(JSON.parse(queryStr));
+    // Usamos abaixo o 'virtuals' (reverse populate), para trazer os dados dos cursos para o bootcamp:
+    query = Bootcamp.find(JSON.parse(queryStr)).populate('courses');
     
     // Para os casos de SELECT, os campos a serem selecionados serão separados com uma ',', e não por espaços (que é necessário para o mongoose), para isso:
     if(req.query.select) {
@@ -131,14 +132,17 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
 // @route   DELETE /api/v1/bootcamps/:id;
 // @access  Private
 exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
-    // As '{}' correspondem as opções deste método, no caso, ele irá retornar o item depois deste ser atualizado (new), e irá checar as informações enviadas com o schema (runValidators):
-    const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
+    // A antiga opção 'Bootcamp.findByIdAndDelete(req.params.id)' não servirá para o 'cascade delete' implementado, ele não irá acionar o 'remove' setado no middleware do bootcamp:
+    const bootcamp = await Bootcamp.findById(req.params.id);
 
     if(!bootcamp) {
         return next(new ErrorResponse(`Não foi possível identificar o Bootcamp de ID num: ${req.params.id}`, 404));    
     }
 
-    res.status(200).json({ success: true, msg: "Bootcamp deleted successfully !"});
+    // Necessário devido a implementação do cascade delete:
+    bootcamp.remove();
+
+    res.status(200).json({ success: true, msg: "Bootcamp deletado com sucesso !"});
 });
 
 // @desc    Verifica os bootcamps que estão próximos, de acordo com o raio (km);

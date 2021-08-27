@@ -99,6 +99,10 @@ const BootcampSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
       }
+},{
+  // Abaixo, estamos configurando o uso dos 'virtuals', que é uma forma de 'populate' reverso, ou seja, iremos mostrar os dados dos courses dentro dos bootcamps:
+  toJSON: {virtuals: true},
+  toObject: {virtuals: true}
 });
 
 /* Inicialização do Slugify, que nos permite converter o nome do bootcamp informado no schema acima.
@@ -129,6 +133,21 @@ BootcampSchema.pre('save', async function(next) {
   this.address = undefined;
 
   next();
+});
+
+// Introdução do 'Cascade Delete', uma forma de garantirmos que todos os respectivos bootcamps sejam deletados caso os cursos sejam deletados:
+BootcampSchema.pre('remove', async function (next) {
+  console.log(`Cursos sendo deletados do bootcamp ${this._id}.`);
+  await this.model('Course').deleteMany({bootcamp: this._id});
+  next();
+});
+
+// Virtuals (populate inverso). O primeiro 'courses' é só como queremos que apareça no resultado, as opções seguintes que são importantes para o link entre os modelos:
+BootcampSchema.virtual('courses', {
+  ref: 'Course',
+  localField: '_id',
+  foreignField: 'bootcamp',
+  justOne: false // Queremos um array.
 });
 
 module.exports = mongoose.model('Bootcamp', BootcampSchema);
