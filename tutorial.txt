@@ -1,0 +1,65 @@
+Como o projeto foi iniciado anteriormente, sem antes termos documentado os procedimentos adotados por etapa, acreditamos ser interessante iniciar pelos comandos utilizados para que o projeto funcione como está, ou seja, a sua estrutura básica para o funcionamento.
+
+Para o funcionamento do projeto, precisamos minimamente instalar os seguintes softwares: Mongodb Community Edition (base de dados em sí), Mongodb Compass (IDE para melhor interface com o banco), NodeJS (assim como as bibliotecas dependentes, como express, etc.), GIT. Também usamos o postman, que é um software para facilitar o envio e recebimento de dados via HTTP, para testar a ferramenta.
+
+Para criar um projeto no NodeJS usamos o comando abaixo, com isso criamos o 'package.json' e o 'package-lock.json':
+-- npm init
+. OBS: 'package-lock.json' Dentre outros, é onde fica as dependencias do projeto, assim como o local de cada um.
+. OBS 2: 'package.json' Dentre outros, é onde fica as configurações do projeto, como o principal arquivo do projeto (no caso o 'server.js'), e onde podemos colocar os scripts, como o que fizemos, o 'dev', que nos permite executar o site em ambiente de desenvolvimento. O comando de execução do script é:
+-- npm run dev
+
+No 'server.js', iremos trazer todos os módulos que desenvolvemos ao longo do projeto, carregá-los devidamente e inicar o site. É importante salientar que a ordem do carregamento dos módulos é importante, alguns módulos dependem de outros para funcionar.
+
+Para que estes módulos sejam utilizados, eles precisam conter o trecho abaixo no final do módulo, exportando a funcionalidade que será importada nos demais módulos:
+-- module.exports = [constante/variável criada];
+O 'module.exports' é próprio do NodeJS.
+
+Criamos a pasta 'config' e nela criamos o 'config.env', este arquivo será local por segurança e inserido no gitignore, ele irá conter as variáveis do ambiente, que serão usados nos demais módulos, através do código:
+-- process.env.[variável do ambiente]
+Criamos também o 'db.js', que contém os dados de conexão do banco de dados, utilizando o 'mongoose'.
+
+Cabe mencionar que utilizamos uma dos seus melhores recursos, que é a execução assincrona, ou seja, criação de uma 'promisse', que irá retornar o valor processado quando este estiver pronto, sem impactar na execução do código.
+-- const [constante/variavel] = async () => {}
+Dentro da função devemos usar o 'await':
+-- const conn = await mongoose.connect(process.env.MONGO_URI, { 
+
+A próxima pasta que criamos é a 'routes', que contém todas as rotas, urls de nosso site. Importamos também os métodos 'CRUD', presentes na pasta 'controllers', para associá-los as rotas definidas.
+Uma outra estratégia que utilizamos foi a de importar as rotas referentes ao outro modelo, uma espécie de 're-roteamento':
+-- const [contante / variavel de roteamento] = require('./[roteamento do modelo]');
+-- router.use('/:[parâmetro do outro modelo]/[url ou rota deste modelo]', [contante / variavel de roteamento]);
+
+Como estamos utilizando re-roteamento, devemos adicionar uma configuração a variável criada no modelo que irá receber o roteamento:
+-- const [variavel / constante] = express.Router({ mergeParams: true });
+
+Podemos utilizar o 'router' do 'express' de diversas formas, como:
+-- router.get('/', (req, res) => {}); (ou '.post()')
+Usamos os parâmetros como em outras linguagens
+-- router.route('/[url ou rota]/:[parâmetro1]/:[parâmetro2]').get([método CRUD de GET]); 
+
+No curso vemos o uso da biblioteca 'morgan', que nos disponibiliza um log mais completo do processamento de nosso projeto, além disso, também nos permite modificar a cor e estilo dos textos que nos são apresentados no log do servidor, como erro vermelho e em itálico por exemplo, mas optamos por não utilizar a mudança de cores do texto no projeto, apenas a parte de log.
+
+Posteriormente criamos a pasta que contém os 'middlewares', que são os módulos responsáveis por alterar os dados durante o processamento (por isso que 'middle'). 
+O módulo 'async' faz o que já mencionamos anteriormente, nos permite executar o código de forma assincrona e retornar uma promisse.
+O 'error.js' é uma forma de erro customizada, que é alterada de acordo com os erros que ocorreram durante o processamento.
+Já o 'logger.js' é um módulo de log criado apenas para testes, neste projeto iremos utilizar o 'morgan' para isso.
+É importante ressaltar que o servidor irá utilizar o middleware apenas se utilizarmos:
+-- app.use([middleware])
+. OBS: Lembrando que o 'app' é um objeto do express.
+
+Existe um outro tipo de 'middleware', que pode ser chamado antes e / ou depois de um modelo / schema for salvo, atualizado no banco de dados, exemplos:
+
+-- BootcampSchema.pre('remove', async function (next) {});
+O 'pre()' é uma chamada que será executada antes que o comando 'remove' seja executado no BD para aquele modelo, e como em todos os middlewares, passamos o 'next' também (apontando para seguir para a próxima rota, e / ou middleware). Assim como o pre temos o 'post()', que possui a lógica similar, mas é executado no momento momento do post.
+
+-- BootcampSchema.virtual('courses', {});
+Já o 'virtuals()' é um 'populate reverso', isso é interessante quando temos uma tabela linkada a outra, pois quando, no caso, o bootcamp for atualizado, ele irá gerar uma lista com os dados dos seus respectivos courses.
+
+O Mongoose também possui algumas funções próprias, como:
+1) O 'aggregate', que retorna uma promisse, recebe um pipeline '[]', que nada mais é que uma sequência de comandos que deve ser seguida (Exemplo no modelo 'Course.js'), e que no fim nos gera um objeto segundo essa sequência de comandos executada no BD.
+2) O 'constructor', como nas demais linguagens, nos permite executar algo no momento da criação do objeto, de sua inicialização. (Exemplo no modelo 'Course.js')
+3) O 'populate', nos permite trazer as informações do BD referentes a tabela que queremos, considerando que elas tenham a ligação por chave primária. (Exemplo no controllers 'courses.js')
+
+O Mongoose aceita alguns comandos para podermos identificar alguns dados em nosso banco, exemplos:
+-- $match: {bootcamp: bootcampId}
+Feito no modelo do 'Course.js'. O match irá procurar a igualdade entre o campo que está no schema 'bootcamp' e o id que foi informado no chamar do método estático, 'bootcampId'.
+. OBS: Em diversas ocasiões, o Mongoose utiliza o caractere '$' para identificar e executar um comando, em alguns casos precisamos adicionar o '$' para que o Mongoose execute o comando adequadamente.

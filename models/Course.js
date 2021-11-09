@@ -39,4 +39,34 @@ const CourseSchema = new mongoose.Schema({
     }
 });
 
+// Criação de um método estático para o schema de courses:
+CourseSchema.statics.getAvgCost = async function(bootcampId) {
+    console.log(`Calculating average cost... do bootcamp: ${bootcampId}`);
+
+    // O 'aggregate' recebe um pipeline, uma sequência de instruções:
+    const obj = await this.aggregate([
+        {
+            $match: {bootcamp: bootcampId}
+        },
+        {
+            $group: {
+                _id: '$bootcamp',
+                averageCost: { $avg: '$tuition'}
+            }
+        }
+    ]);
+
+    console.log(obj);
+};
+
+// Executa 'getAvgCost' depois que o curso for salvo:
+CourseSchema.post('save', function() {
+    this.constructor.getAvgCost(this.bootcamp);
+});
+
+// Executa 'getAvgCost' antes que o curso seja deletado:
+CourseSchema.pre('remove', function() {
+    this.constructor.getAvgCost(this.bootcamp);
+});
+
 module.exports = mongoose.model('Course', CourseSchema);
