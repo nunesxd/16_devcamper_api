@@ -63,3 +63,13 @@ O Mongoose aceita alguns comandos para podermos identificar alguns dados em noss
 -- $match: {bootcamp: bootcampId}
 Feito no modelo do 'Course.js'. O match irá procurar a igualdade entre o campo que está no schema 'bootcamp' e o id que foi informado no chamar do método estático, 'bootcampId'.
 . OBS: Em diversas ocasiões, o Mongoose utiliza o caractere '$' para identificar e executar um comando, em alguns casos precisamos adicionar o '$' para que o Mongoose execute o comando adequadamente.
+
+Para podermos lidar com os modelos criados pelo Mongoose podemos usar, sendo todos os métodos assincronos também:
+1) [model].findById(req.params.[id])
+- que traz todos os dados identificados no banco pelo id especificado;
+2) [model].findByIdAndUpdate(req.params.[id], req.body, {
+    new: true,
+    runValidators: true});
+- Nos permite atualizar os dados daquele item, pelo corpo que foi enviado na requisição HTTP de 'PUT' enviada. O terceiro parâmetro são as configurações, no caso, 'new' para que sejam retornados os dados atualizados, e o 'runvalidator' para que sejam executadas as validações nos dados que foram enviados no body da requisição; 
+3) [model].findByIdAndDelete(req.params.[id]); ou [model].remove();
+- Fazem a mesma coisa, que é excluir aquele item que foi identificado pelo id, no BD.
