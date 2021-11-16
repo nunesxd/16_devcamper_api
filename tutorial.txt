@@ -54,10 +54,11 @@ O 'pre()' é uma chamada que será executada antes que o comando 'remove' seja e
 -- BootcampSchema.virtual('courses', {});
 Já o 'virtuals()' é um 'populate reverso', isso é interessante quando temos uma tabela linkada a outra, pois quando, no caso, o bootcamp for atualizado, ele irá gerar uma lista com os dados dos seus respectivos courses.
 
-O Mongoose também possui algumas funções próprias, como:
-1) O 'aggregate', que retorna uma promisse, recebe um pipeline '[]', que nada mais é que uma sequência de comandos que deve ser seguida (Exemplo no modelo 'Course.js'), e que no fim nos gera um objeto segundo essa sequência de comandos executada no BD.
-2) O 'constructor', como nas demais linguagens, nos permite executar algo no momento da criação do objeto, de sua inicialização. (Exemplo no modelo 'Course.js')
-3) O 'populate', nos permite trazer as informações do BD referentes a tabela que queremos, considerando que elas tenham a ligação por chave primária. (Exemplo no controllers 'courses.js')
+O schema do Mongoose também possui algumas funções próprias, como:
+1) O 'aggregate', que retorna uma promisse, recebe um pipeline '[]', que nada mais é que uma sequência de comandos que deve ser seguida (Exemplo no modelo 'Course.js'), e que no fim nos gera um objeto segundo essa sequência de comandos executada no BD;
+2) O 'constructor', como nas demais linguagens, nos permite executar algo no momento da criação do objeto, de sua inicialização. (Exemplo no modelo 'Course.js');
+
+4) 
 
 O Mongoose aceita alguns comandos para podermos identificar alguns dados em nosso banco, exemplos:
 -- $match: {bootcamp: bootcampId}
@@ -72,4 +73,9 @@ Para podermos lidar com os modelos criados pelo Mongoose podemos usar, sendo tod
     runValidators: true});
 - Nos permite atualizar os dados daquele item, pelo corpo que foi enviado na requisição HTTP de 'PUT' enviada. O terceiro parâmetro são as configurações, no caso, 'new' para que sejam retornados os dados atualizados, e o 'runvalidator' para que sejam executadas as validações nos dados que foram enviados no body da requisição; 
 3) [model].findByIdAndDelete(req.params.[id]); ou [model].remove();
-- Fazem a mesma coisa, que é excluir aquele item que foi identificado pelo id, no BD.
+- Fazem a mesma coisa, que é excluir aquele item que foi identificado pelo id, no BD;
+4) Course.findById(req.params.id).populate({
+    path: 'bootcamp',
+    select: 'name description'
+});
+- O 'populate', nos permite trazer as informações do BD referentes a tabela que queremos, considerando que elas tenham a ligação por chave primária. No exemplo acima, foi possível trazer os dados do bootcamp através do modelo de cursos, uma vez que os dois possuem ligação (Exemplo no controllers 'courses.js');
