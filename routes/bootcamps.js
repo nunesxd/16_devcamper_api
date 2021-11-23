@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getBootcamps, getBootcamp, createBootcamp, updateBootcamp, deleteBootcamp, getBootcampsInRadius} = require('../controllers/bootcamps');
+const {getBootcamps, getBootcamp, createBootcamp, updateBootcamp, deleteBootcamp, getBootcampsInRadius, fileupload} = require('../controllers/bootcamps');
 
 /* Apenas lembrando que podemos usar o router como o app do express, que fizemos em nosso módulo de entrada (server.js):
 router.get('/', (req, res) => {});*/
@@ -16,5 +16,6 @@ router.use('/:bootcampId/courses', courseRouter); // Vindo de courses;
 router.route('/').get(getBootcamps).post(createBootcamp);
 router.route('/:id').get(getBootcamp).put(updateBootcamp).delete(deleteBootcamp);
 router.route('/radius/:zipcode/:distance').get(getBootcampsInRadius);
+router.route('/:id/photo').put(fileupload);
 
 module.exports = router;

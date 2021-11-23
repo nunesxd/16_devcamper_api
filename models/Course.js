@@ -41,7 +41,6 @@ const CourseSchema = new mongoose.Schema({
 
 // Criação de um método estático para o schema de courses:
 CourseSchema.statics.getAvgCost = async function(bootcampId) {
-    console.log(`Calculating average cost... do bootcamp: ${bootcampId}`);
 
     // O 'aggregate' recebe um pipeline, uma sequência de instruções:
     const obj = await this.aggregate([

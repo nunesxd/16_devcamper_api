@@ -6,6 +6,7 @@ const Bootcamp = require('../models/Bootcamp');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const geocoder = require('../utils/geocoder');
+const path = require('path');
 
 // @desc    Obtem todos os bootcamps;
 // @route   GET /api/v1/bootcamps;
@@ -172,5 +173,50 @@ exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
         success: true,
         count: bootcamps.length,
         results: bootcamps
+    });
+});
+
+
+// @desc    Upload de fotos para um bootcamp;
+// @route   DELETE /api/v1/bootcamps/:id;
+// @access  Private
+exports.fileupload = asyncHandler(async (req, res, next) => {
+    const bootcamp = await Bootcamp.findById(req.params.id);
+
+    if(!bootcamp) {
+        return next(new ErrorResponse(`Não foi possível identificar o Bootcamp de ID num: ${req.params.id}`, 404));    
+    }
+
+    // Verifica se existe uma foto para upload:
+    if(!req.files) {
+        return next(new ErrorResponse(`Nenhuma foto foi inserida para upload !`, 400));
+    }
+
+    // Do request, obtemos a imagem em sí:
+    const file = req.files.file;
+
+    // Teste para verificar se o arquivo é uma imagem:
+    if(!file.mimetype.startsWith('image')) {
+        return next(new ErrorResponse(`Por favor, enviar um arquivo de imagem !`, 400));
+    }
+
+    // Teste do tamanho da imagem, não queremos que o upload seja de qualquer tamanho:
+    if(file.size > process.env.MAX_FILE_UPLOAD) {
+        return next(new ErrorResponse(`O limite do tamanho do arquivo é de ${process.env.MAX_FILE_UPLOAD}, por favor, enviar um arquivo menor !`, 400));
+    }
+
+    // Cria um nome customizado, para não haver sobrescrita no diretório destino:
+    file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`
+
+    // Execução do upload da imagem:
+    file.mv(`${process.env.FILE_PATH_UPLOAD}/${file.name}`, async err => {
+        if(err) {
+            console.log(err);
+            return next(new ErrorResponse(`Ocorreu um erro no envio do arquivo !`, 500));
+        }
+
+        await Bootcamp.findByIdAndUpdate(req.params.id, { photo: file.name });
+
+        res.status(200).json({ success: true, data: file.name });
     });
 });

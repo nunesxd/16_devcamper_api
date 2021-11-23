@@ -79,3 +79,17 @@ Para podermos lidar com os modelos criados pelo Mongoose podemos usar, sendo tod
     select: 'name description'
 });
 - O 'populate', nos permite trazer as informações do BD referentes a tabela que queremos, considerando que elas tenham a ligação por chave primária. No exemplo acima, foi possível trazer os dados do bootcamp através do modelo de cursos, uma vez que os dois possuem ligação (Exemplo no controllers 'courses.js');
+
+Instalamos o app 'express-fileupload'. Criamos no 'controllers' > 'bootcamps' a funcionlidade de upload de fotos para o bootcamp que for informado. Em seguida criamos a respectiva rota para a funcionalidade, testando por fim no Postman.
+Configuramos o body no Postman como 'form-data', criamos o campo 'file', com o tipo 'file', e selecionamos a imagem para enviar ao servidor.
+. OBS: Assim como em outros middlewares, é importante que inicializemos o app 'fileupload' antes da criação das rotas, no módulo 'server.js', se não sempre teremos o erro de envio de fotos.
+Em nosso arquivo de 'enviroment', criamos o local onde o arquivo deve ser armazenado.
+
+Durante a configuração do middleware de upload de arquivos, renomeamos o arquivo enviado com um nome customizado, para evitar sobrescrita de arquivos, que por ventura tenham o mesmo nome no diretório do servidor destino.
+Para assegurar que a extensão do arquivo seja parte do seu nome, usamos a biblioteca nativa do NodeJS 'path', exemplo de um dos métodos:
+-- path.parse(file.name).ext
+
+Para executarmos a função de upload da imagem, podemos usar o método builtin 'mv':
+-- file.mv(`${process.env.FILE_PATH_UPLOAD}/${file.name}`, [callback para armazenar o arquivo]);
+Criamos a pasta onde configuramos no enviroment, e definimos a pasta como sendo o local de arquivos estáticos, dentro do módulo 'server.js', usamos o path para concatenar a raiz da pasta do projeto:
+-- app.use(express.static(path.join(__dirname, 'public')));

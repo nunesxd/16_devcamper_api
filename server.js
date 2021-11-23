@@ -3,6 +3,8 @@ const dotenv = require('dotenv');
 dotenv.config({ path: './config/config.env' });
 
 const express = require('express');
+const fileupload = require('express-fileupload');
+const path = require('path');
 const bootcamps = require('./routes/bootcamps'); // Arquivo de rotas.
 const courses = require('./routes/courses');
 const morgan = require('morgan');
@@ -24,6 +26,11 @@ if(process.env.NODE_ENV === 'development') {
 
 // Body Parser, inicializador:
 app.use(express.json());
+
+app.use(fileupload());
+
+// Arquivos estáticos:
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Configuração das rotas, assim não precisamos deixar a URL completa lá:
 app.use('/api/v1/bootcamps', bootcamps);
