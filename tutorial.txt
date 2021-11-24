@@ -40,7 +40,13 @@ Como estamos utilizando re-roteamento, devemos adicionar uma configuração a va
 Podemos utilizar o 'router' do 'express' de diversas formas, como:
 -- router.get('/', (req, res) => {}); (ou '.post()')
 Usamos os parâmetros como em outras linguagens
--- router.route('/[url ou rota]/:[parâmetro1]/:[parâmetro2]').get([método CRUD de GET]); 
+-- router.route('/[url ou rota]/:[parâmetro1]/:[parâmetro2]').get([método CRUD de GET]);
+
+. OBS: Por padrão, o 'express' nos permite passar um erro pelo 'next()', nos enviando um html contendo o erro. Podemos utilizar o mesmo princípio, mas alterando o 'handling' (para isso criamos o arquivo de 'erro' na pasta de middlewares, e uma extensão da classe na pasta utils, 'error.js').
+Uma das outras formas de se lidar com o erro, é criando um novo objeto de erro, como abaixo:
+next(new ErrorHandler(`Não foi possível identificar o Bootcamp de ID num: ${req.params.id}`, 404));
+Usando o 'catch' apenas, poderíamos escrever:
+next(err);
 
 No curso vemos o uso da biblioteca 'morgan', que nos disponibiliza um log mais completo do processamento de nosso projeto, além disso, também nos permite modificar a cor e estilo dos textos que nos são apresentados no log do servidor, como erro vermelho e em itálico por exemplo, mas optamos por não utilizar a mudança de cores do texto no projeto, apenas a parte de log.
 
@@ -55,19 +61,31 @@ Já o 'logger.js' é um módulo de log criado apenas para testes, neste projeto 
 Existe um outro tipo de 'middleware', que pode ser chamado antes e / ou depois de um modelo / schema for salvo, atualizado no banco de dados, exemplos:
 
 -- BootcampSchema.pre('remove', async function (next) {});
-O 'pre()' é uma chamada que será executada antes que o comando 'remove' seja executado no BD para aquele modelo, e como em todos os middlewares, passamos o 'next' também (apontando para seguir para a próxima rota, e / ou middleware). Assim como o pre temos o 'post()', que possui a lógica similar, mas é executado no momento momento do post.
+- O 'pre()' é uma chamada que será executada antes que o comando 'remove' seja executado no BD para aquele modelo, e como em todos os middlewares, passamos o 'next' também (apontando para seguir para a próxima rota, e / ou middleware). Assim como o pre temos o 'post()', que possui a lógica similar, mas é executado no momento momento do post.
 
 -- BootcampSchema.virtual('courses', {});
-Já o 'virtuals()' é um 'populate reverso', isso é interessante quando temos uma tabela linkada a outra, pois quando, no caso, o bootcamp for atualizado, ele irá gerar uma lista com os dados dos seus respectivos courses.
+- Já o 'virtuals()' é um 'populate reverso', isso é interessante quando temos uma tabela linkada a outra, pois quando, no caso, o bootcamp for atualizado, ele irá gerar uma lista com os dados dos seus respectivos courses.
 
 O schema do Mongoose também possui algumas funções próprias, como:
 1) O 'aggregate', que retorna uma promisse, recebe um pipeline '[]', que nada mais é que uma sequência de comandos que deve ser seguida (Exemplo no modelo 'Course.js'), e que no fim nos gera um objeto segundo essa sequência de comandos executada no BD;
 2) O 'constructor', como nas demais linguagens, nos permite executar algo no momento da criação do objeto, de sua inicialização. (Exemplo no modelo 'Course.js');
 
-Nos métodos CRUD do 'controllers.js', podemos usar queries dentro da URL (separando os campos com '?'), para que o mongoose use no 'find()', que procura os registros dentro da base.
+Nos métodos CRUD presentes no 'controllers.js', podemos disponibilizar 'queries' dentro da nossa URL (devemos começar a query por '?', separando os campos com '&'), para que o mongoose use no 'find()', procurando os registros dentro da base de dados.
 Cabe mencionar, que estas queries precisam de uma "tradução" para serem usadas pelo JSON, por exemplo, devemos inserir o caractere '$' em casos de "menor do que X valor", pois o mongoose não realiza tal procedimento, e considera que o valor informado é uma ID, causando erro.
-. OBS: Para mais detalhes quanto ao uso de Query, ver módulo 'controllers' > 'bootcamps.js'.
+. OBS: Para mais detalhes quanto ao uso de Query, ver módulo 'middlewares' > 'advancedResults.js'.
 Para os casos como o 'select' e 'sort', como estes não são campos do schema, devemos retirá-los da query principal (que apenas realiza os matches por campo), eles seriam separados, e incindiriam nos bootcamps encontrados pelo GET. Caso não tenha um 'select' e 'sort' na URL, o 'GET' funcionaria normalmente.
+
+Colocamos as 'queries' em um módulo middleware para facilitar o seu uso em demais métodos, do jeito que foi feito, optamos por executar o middleware através do módulo de roteamento, utilizando o objeto 'res.advancedResults' para obtenção dos resultados nos métodos presentes nos 'controllers'.
+
+As 'Queries' que foram criadas são as seguintes (lembrando que devemos ter o '?' no começo, e '&' para separar as queries):
+1) [campo do modelo]=[valor]
+- Retorna os registros que possuem o respectivo valor no campo informado;
+2) select=[campo 1 do modelo],[campo 2 do modelo],[...]
+- Retorna todos os registros encontrados anteriormente, mas contendo apenas os campos selecionados;
+3) limit=[int]
+- Limita a quantidade de registros que aparece no resultado;
+4) page=[int]
+- Retorna os registros encontrados anteriormente, mas na segunda segunda página da paginação criada;
 
 O Mongoose aceita alguns comandos para podermos identificar alguns dados em nosso banco, exemplos:
 -- $match: {bootcamp: bootcampId}
@@ -87,7 +105,8 @@ Para podermos lidar com os modelos criados pelo Mongoose podemos usar, sendo tod
     path: 'bootcamp',
     select: 'name description'
 });
-- O 'populate', nos permite trazer as informações do BD referentes a tabela que queremos, considerando que elas tenham a ligação por chave primária. No exemplo acima, foi possível trazer os dados do bootcamp através do modelo de cursos, uma vez que os dois possuem ligação (Exemplo no controllers 'courses.js');
+- O 'populate', nos permite trazer as informações do BD referentes a tabela que queremos, considerando que elas tenham a ligação por chave primária. No exemplo acima, foi possível trazer os dados do bootcamp através do modelo de cursos, uma vez que os dois possuem ligação (Exemplo no middleware 'advancedResults.js');
+. OBS: Cabe mencionar que o populate pode ser simples, especificando apenas o modelo, como 'bootcamp', ou se quisermos algo mais específico, devemos passar um objeto, como no exemplo acima.
 5) [model].find()
 - Procura os registros com o que for informado, podemos criar uma query e passar para o find, por exemplo;
 
@@ -104,3 +123,4 @@ Para executarmos a função de upload da imagem, podemos usar o método builtin 
 -- file.mv(`${process.env.FILE_PATH_UPLOAD}/${file.name}`, [callback para armazenar o arquivo]);
 Criamos a pasta onde configuramos no enviroment, e definimos a pasta como sendo o local de arquivos estáticos, dentro do módulo 'server.js', usamos o path para concatenar a raiz da pasta do projeto:
 -- app.use(express.static(path.join(__dirname, 'public')));
+
