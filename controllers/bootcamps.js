@@ -1,6 +1,4 @@
-/* Módulos middleware que irão conter a lógica de nossos routes:
-Optamos por utilizar um conceito de versionamento (v1, v2, dentro da URL), onde poderíamos continuar usando uma versão anterior simultâneamente.
-OBS: Anteriormente fizemos um try/catch dentro das funções async abaixo, mas identificamos que utilizando o módulo asyncHandler, podemos aproveitar do catch() das Promises criadas, retirando assim as repetições.*/
+/* Módulos middleware que irão conter a lógica de nossos routes:*/
 
 const Bootcamp = require('../models/Bootcamp');
 const ErrorResponse = require('../utils/errorResponse');
@@ -12,9 +10,6 @@ const path = require('path');
 // @route   GET /api/v1/bootcamps;
 // @access  Public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-    /* Podemos usar queries dentro da URL (separando os campos com '?'), para que o mongoose use no find() abaixo.
-    Cabe mencionar, que estas queries precisam de uma "tradução" para serem usadas pelo JSON, por exemplo, devemos inserir o caractere '$' em casos de "menor do que X valor", pois o mongoose não realiza tal procedimento, e considera que o valor informado é uma ID, causando erro.
-    Para os casos como o select e sort, como estes não são campos do schema, devemos retirá-los da query principal (que apenas realiza os matches por campo), eles seria separados, e incindiriam nos bootcamps encontrados pelo GET. Caso não tenha um select e sort na URL, o GET funcionaria normalmente.*/
     let query;
 
     const reqQuery = { ...req.query };
@@ -93,20 +88,12 @@ exports.getBootcamp = asyncHandler(async (req, res, next) => {
     }
 
     res.status(201).json({ success: true, data: bootcamp });
-
-    //res.status(400).json({ success: false, error: err});
-    /* Por padrão o express nos permite passar um erro pelo next(), nos enviando um html contendo o erro. Podemos utilizar o mesmo princípio, mas alterando o handling (para isso criamos o arquivo de erro na pasta de middlewares, e uma extensão da classe na pasta utils).
-    Uma das formas de se fazer isso é criando um novo objeto de erro, como abaixo:
-    next(new ErrorHandler(`Não foi possível identificar o Bootcamp de ID num: ${req.params.id}`, 404));
-    Usando o 'catch' apenas, poderíamos escrever:
-    next(err);*/
 });
 
 // @desc    Cria um bootcamp;
 // @route   POST /api/v1/bootcamps;
 // @access  Private
 exports.createBootcamp = asyncHandler(async (req, res, next) => {
-    // Usamos o mesmo processo, estrategia, de usar o await, e fazer o processo async, onde podemos usar o try/catch para gerenciar os erros. Essa estrategia foi desfeita, pois estamos utilizando o módulo asyncHandler.
     const bootcamp = await Bootcamp.create(req.body);
 
     res.status(201).json({ success: true, data: bootcamp });

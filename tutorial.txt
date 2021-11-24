@@ -18,10 +18,16 @@ Criamos a pasta 'config' e nela criamos o 'config.env', este arquivo será local
 -- process.env.[variável do ambiente]
 Criamos também o 'db.js', que contém os dados de conexão do banco de dados, utilizando o 'mongoose'.
 
+No módulo 'db.js', como o connect do mongoose retorna uma promise, poderíamos usar o '.then()', mas com a estratégia que usamos (usando async), podemos pedir para o Node esperar o retorno do connect, evitando problemas de conexão (que no caso não deveriam acontecer muito, pois o banco será local).
+Um outro problema que teríamos, seria em lidar com Unhandled errors das promises, poderíamos usar um try/catch no processo, mas optamos por lidar com os erros no 'server.js'.
+
 Cabe mencionar que utilizamos uma dos seus melhores recursos, que é a execução assincrona, ou seja, criação de uma 'promisse', que irá retornar o valor processado quando este estiver pronto, sem impactar na execução do código.
 -- const [constante/variavel] = async () => {}
 Dentro da função devemos usar o 'await':
--- const conn = await mongoose.connect(process.env.MONGO_URI, { 
+-- const conn = await mongoose.connect(process.env.MONGO_URI, { }
+
+Nos módulos presentes nos 'controllers', que contém os métodos CRUD de nossa API, utilizamos um conceito de versionamento (v1, v2, dentro da URL), que possibilita continuar usando as versões anteriores simultâneamente.
+. OBS: Anteriormente, fizemos um 'try/catch' dentro das funções CRUD async, mas identificamos que utilizando o método 'asyncHandler', do módulo 'async.js', podemos aproveitar o 'catch()' das Promises criadas, retirando assim possíveis repetições.
 
 A próxima pasta que criamos é a 'routes', que contém todas as rotas, urls de nosso site. Importamos também os métodos 'CRUD', presentes na pasta 'controllers', para associá-los as rotas definidas.
 Uma outra estratégia que utilizamos foi a de importar as rotas referentes ao outro modelo, uma espécie de 're-roteamento':
@@ -58,7 +64,10 @@ O schema do Mongoose também possui algumas funções próprias, como:
 1) O 'aggregate', que retorna uma promisse, recebe um pipeline '[]', que nada mais é que uma sequência de comandos que deve ser seguida (Exemplo no modelo 'Course.js'), e que no fim nos gera um objeto segundo essa sequência de comandos executada no BD;
 2) O 'constructor', como nas demais linguagens, nos permite executar algo no momento da criação do objeto, de sua inicialização. (Exemplo no modelo 'Course.js');
 
-4) 
+Nos métodos CRUD do 'controllers.js', podemos usar queries dentro da URL (separando os campos com '?'), para que o mongoose use no 'find()', que procura os registros dentro da base.
+Cabe mencionar, que estas queries precisam de uma "tradução" para serem usadas pelo JSON, por exemplo, devemos inserir o caractere '$' em casos de "menor do que X valor", pois o mongoose não realiza tal procedimento, e considera que o valor informado é uma ID, causando erro.
+. OBS: Para mais detalhes quanto ao uso de Query, ver módulo 'controllers' > 'bootcamps.js'.
+Para os casos como o 'select' e 'sort', como estes não são campos do schema, devemos retirá-los da query principal (que apenas realiza os matches por campo), eles seriam separados, e incindiriam nos bootcamps encontrados pelo GET. Caso não tenha um 'select' e 'sort' na URL, o 'GET' funcionaria normalmente.
 
 O Mongoose aceita alguns comandos para podermos identificar alguns dados em nosso banco, exemplos:
 -- $match: {bootcamp: bootcampId}
@@ -79,6 +88,8 @@ Para podermos lidar com os modelos criados pelo Mongoose podemos usar, sendo tod
     select: 'name description'
 });
 - O 'populate', nos permite trazer as informações do BD referentes a tabela que queremos, considerando que elas tenham a ligação por chave primária. No exemplo acima, foi possível trazer os dados do bootcamp através do modelo de cursos, uma vez que os dois possuem ligação (Exemplo no controllers 'courses.js');
+5) [model].find()
+- Procura os registros com o que for informado, podemos criar uma query e passar para o find, por exemplo;
 
 Instalamos o app 'express-fileupload'. Criamos no 'controllers' > 'bootcamps' a funcionlidade de upload de fotos para o bootcamp que for informado. Em seguida criamos a respectiva rota para a funcionalidade, testando por fim no Postman.
 Configuramos o body no Postman como 'form-data', criamos o campo 'file', com o tipo 'file', e selecionamos a imagem para enviar ao servidor.
