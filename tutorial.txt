@@ -124,3 +124,8 @@ Para executarmos a função de upload da imagem, podemos usar o método builtin 
 Criamos a pasta onde configuramos no enviroment, e definimos a pasta como sendo o local de arquivos estáticos, dentro do módulo 'server.js', usamos o path para concatenar a raiz da pasta do projeto:
 -- app.use(express.static(path.join(__dirname, 'public')));
 
+Nós temos um REST full API até o momento, mas agora precisamos adicionar o conceito de segurança, de usuários, não só para isso instalamos os apps: 'jsonwebtoken' e 'bcryptjs'.
+
+Criamos o 'model' > 'User.js', e criamos o seu schema, roteamento ('auth' e 'users'), e os seus respectivos controllers.
+'auth' se refere a autenticação, registro, trocas de senha.
+Já 'users' seria as funcionalidades de admin, criar, atualizar e deletar um usuário.

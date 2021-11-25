@@ -1,5 +1,5 @@
 /* Módulo responsável por preencher nossa base com os dados preenchidos, contidos na pasta '_data', apenas para facilitar o processo.
-Como este processo de preenchimento não faz parte da API exatamente, iremos criar todo o ambiente dentro do módulo, de forma que este não preciso de conexão com os demais módulos:*/
+Como este processo de preenchimento não faz parte da API exatamente, iremos criar todo o ambiente dentro do módulo, de forma que este módulo não precisa de conexão com os demais:*/
 
 const dotenv = require('dotenv');
 // Carrega as variáveis do projeto:

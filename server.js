@@ -7,6 +7,7 @@ const fileupload = require('express-fileupload');
 const path = require('path');
 const bootcamps = require('./routes/bootcamps'); // Arquivo de rotas.
 const courses = require('./routes/courses');
+const auth = require('./routes/auth');
 const morgan = require('morgan');
 const connectDb = require('./config/db');
 const errorHandler = require('./middleware/error');
@@ -35,6 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Configuração das rotas, assim não precisamos deixar a URL completa lá:
 app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/courses', courses);
+app.use('/api/v1/auth', auth);
 
 // Error handler customizado, é importante que ele seja o último, pois o 'use' cria uma fila de middlewares para serem executados, e o errorHandler deve ser capaz de pegar o erro de qualquer função executada anteriormente:
 app.use(errorHandler);

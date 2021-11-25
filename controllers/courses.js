@@ -15,7 +15,7 @@ exports.getCourses = asyncHandler(async (req, res, next) => {
     2 - Caso nada seja especificado, retornar todos os cursos presentes no banco.
     OBS: Com o middleware 'advancedResults', não é mais necessário realizarmos as checagens por aqui, adicionamos o id do bootcamp na query por lá*/
 
-    // Não queremos paginação caso estejamos verificando os cursos de um bootcamp:
+    // Não queremos paginação quando verificamos os cursos de um bootcamp:
     if(req.params.bootcampId) {
         delete res.advancedResults['pagination'];
     };
