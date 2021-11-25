@@ -129,3 +129,12 @@ Nós temos um REST full API até o momento, mas agora precisamos adicionar o con
 Criamos o 'model' > 'User.js', e criamos o seu schema, roteamento ('auth' e 'users'), e os seus respectivos controllers.
 'auth' se refere a autenticação, registro, trocas de senha.
 Já 'users' seria as funcionalidades de admin, criar, atualizar e deletar um usuário.
+Criamos o método de registro de um novo usuário no módulo: 'controllers' > 'auth.js', e implementamos a criptografia da respectiva senha usando o 'bcryptjs'.
+
+. OBS: Existe uma biblioteca no Node chamada 'bcrypt', mas achamos que esta apresenta muitos erros, ainda mais em ambientes Windows, por isso a seleção da outra versão do app.
+
+O 'bcryptjs' possui algumas funcionalidades próprias, como:
+-- const salt = bcrypt.genSalt(10);
+Podemos gerar um 'salt' para a encriptação da senha, quanto maior o número especificado maior a segurança da encriptação, e maior o tamanho do seu armazenamento... Por isso é recomendado utilizar o '10'.
+-- bcrypt.hash(this.password, salt);
+Geramos o password encriptado utilizando o 'salt', complexidade gerado anteriormente.
