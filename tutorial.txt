@@ -138,3 +138,9 @@ O 'bcryptjs' possui algumas funcionalidades próprias, como:
 Podemos gerar um 'salt' para a encriptação da senha, quanto maior o número especificado maior a segurança da encriptação, e maior o tamanho do seu armazenamento... Por isso é recomendado utilizar o '10'.
 -- bcrypt.hash(this.password, salt);
 Geramos o password encriptado utilizando o 'salt', complexidade gerado anteriormente.
+
+Ao registrarmos um novo usuário, queremos enviar um 'JSON Web Token' (ou 'JWT') como confirmação, para isso, criamos um método (não é middleware) dentro de 'models' > 'User.js'. O 'JWT' é um código que é separado em 3 partes, o primeiro é o 'header' contendo o algoritmo e o seu tipo, a segunda parte são os dados processados do usuário, e a terceira parte é a assinatura de verificação, com detalhamento da segurança de encriptação e etc. Lembrando que todos esses dados descriptados são em formato JSON.
+
+. OBS: Não criamos um middleware para lidar com a geração do token, para isso, utilizamos o 'methods', que nada mais é que uma função que pode ser executada por uma instância do modelo, diferente do 'statics', que é executado antes da instanciação do modelo.
+
+Usamos o método 'sign' do JWT, que precisa do 'payload' (segunda etapa) a ser enviado, e o segredo para encriptação, que foi inserido no arquivo de configuração do projeto.
