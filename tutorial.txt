@@ -144,3 +144,5 @@ Ao registrarmos um novo usuário, queremos enviar um 'JSON Web Token' (ou 'JWT')
 . OBS: Não criamos um middleware para lidar com a geração do token, para isso, utilizamos o 'methods', que nada mais é que uma função que pode ser executada por uma instância do modelo, diferente do 'statics', que é executado antes da instanciação do modelo.
 
 Usamos o método 'sign' do JWT, que precisa do 'payload' (segunda etapa) a ser enviado, e o segredo para encriptação, que foi inserido no arquivo de configuração do projeto.
+
+Seguindo, agora iremos implementar o método de login do usuário, usamos o método do 'mongoose' 'findone()', para nos retornar um usuário com o email especificado no request, com essas informações, usamos o método builtin do 'bcrypt', '.compare([password inserido], this.[campo de password do modelo])', para validar a senha encriptada do usuário no BD.
