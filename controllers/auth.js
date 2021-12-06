@@ -16,11 +16,8 @@ exports.register = asyncHandler(async (req, res, next) => {
         password,
         role
     });
-
-    // Cria o token JWT, método de nosso modelo:
-    const token = user.getSignedJwtToken();
-
-    res.status(200).json({ success: true, token });
+    
+    sendTokenResponse(user, res, 200);
 });
 
 
@@ -48,9 +45,28 @@ exports.login = asyncHandler(async (req, res, next) => {
     if(!isMatch) {
         return next(new ErrorResponse('Usuário não identificado, por favor, inserir outras credenciais !', 400));
     };
+    
+    sendTokenResponse(user, res, 200);
+});
 
+
+// Obtem token, cria o cookie e envia a resposta:
+const sendTokenResponse = (user, res, statusCode) => {
     // Cria o token JWT, método de nosso modelo:
     const token = user.getSignedJwtToken();
 
-    res.status(200).json({ success: true, token });
-});
+    // Opções para a criação do nosso cookie:
+    // OBS: O restante do calculo serve para transformar o valor em 30 dias.
+    // O httpOnly sinaliza que o cookie pode ser lido pelo JS no browser do client. 
+    const options = {
+        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
+        httpOnly: true
+    };
+
+    // Opção que envio o cookie pelo método HTTPS, que queremos apenas se o ambiente for de produção:
+    if(process.env.NODE_ENV === 'production') {
+        options.secure = true;
+    }   
+
+    res.status(statusCode).cookie('token', token, options).json({ success: true, token });
+} 

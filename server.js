@@ -4,6 +4,7 @@ dotenv.config({ path: './config/config.env' });
 
 const express = require('express');
 const fileupload = require('express-fileupload');
+const cookieParser = require('cookie-parser');
 const path = require('path');
 const bootcamps = require('./routes/bootcamps'); // Arquivo de rotas.
 const courses = require('./routes/courses');
@@ -29,6 +30,9 @@ if(process.env.NODE_ENV === 'development') {
 app.use(express.json());
 
 app.use(fileupload());
+
+// Manipulação de cookies:
+app.use(cookieParser());
 
 // Arquivos estáticos:
 app.use(express.static(path.join(__dirname, 'public')));

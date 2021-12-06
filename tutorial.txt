@@ -145,4 +145,8 @@ Ao registrarmos um novo usuário, queremos enviar um 'JSON Web Token' (ou 'JWT')
 
 Usamos o método 'sign' do JWT, que precisa do 'payload' (segunda etapa) a ser enviado, e o segredo para encriptação, que foi inserido no arquivo de configuração do projeto.
 
-Seguindo, agora iremos implementar o método de login do usuário, usamos o método do 'mongoose' 'findone()', para nos retornar um usuário com o email especificado no request, com essas informações, usamos o método builtin do 'bcrypt', '.compare([password inserido], this.[campo de password do modelo])', para validar a senha encriptada do usuário no BD.
+Seguindo, agora iremos implementar o método de login do usuário, usamos o método do 'mongoose', 'findone()', para nos retornar um usuário com o email especificado no request, com essas informações, usamos o método builtin do 'bcrypt', ('.compare([password inserido], this.[campo de password do modelo])'), para validar a senha encriptada do usuário no BD.
+
+A forma de login é pelo envio do token gerado, em um primeiro momento enviamos o token pelo 'res.status', mas queremos que o browser armazene esse dado para demais solicitações privadas, uma forma de ser feita é pelo 'local storage', embora não seja a mais segura, a forma que iremos usar é a da criação de um cookie.
+
+Para a utilização de cookies, usamos a biblioteca 'cookie-parser'. Criamos uma função específica para criação de cookies, em 'controllers' > 'auth.js'.
