@@ -150,3 +150,15 @@ Seguindo, agora iremos implementar o método de login do usuário, usamos o mét
 A forma de login é pelo envio do token gerado, em um primeiro momento enviamos o token pelo 'res.status', mas queremos que o browser armazene esse dado para demais solicitações privadas, uma forma de ser feita é pelo 'local storage', embora não seja a mais segura, a forma que iremos usar é a da criação de um cookie.
 
 Para a utilização de cookies, usamos a biblioteca 'cookie-parser'. Criamos uma função específica para criação de cookies, em 'controllers' > 'auth.js'.
+
+O próximo passo é requerer este token dos usuários cadastrados nas rotas, ou métodos que são privados. Para isso criamos o arquivo 'middleware' > 'auth.js'.
+Por convenção, a ideia é obter da requisição HTTP (Postman), um item no cabeçalho chamado 'Authorization', com o conteúdo do token do usuário que está logado:
+-- 'Bearer [JSON Token]'.
+Após verificarmos a existência do token na requisição, e / ou da sua existência como um cookie no browser (implementação no ambiente de produção), devemos validar o seu conteúdo, ou 'payload', com o método:
+-- 'jwt.verify([token a ser analisado], [segredo usado])';
+Por fim, criamos o 'usuário' na requisição, com os dados do usuário identificado no BD:
+-- req.user = await User.findById(tknDecoded.id);
+
+Para proteger as rotas com o nosso novo middleware, precisamos primeiro trazer o método criado 'protect', e passá-lo como o primeiro parâmetro das rotas geradas.
+
+Com o usuário logado, criamos um novo método de 'verificar o usuário logado atual', em 'controllers' > 'auth.js'.
