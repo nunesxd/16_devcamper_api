@@ -7,7 +7,7 @@ const Bootcamp = require('../models/Bootcamp');
 const advancedResults = require('../middleware/advancedResults');
 
 // Middleware de proteção, verificação dos tokens dos usuários. Deve ser passado como primeiro argumento das rotas:
-const {protect} = require('../middleware/auth');
+const {protect, authorize} = require('../middleware/auth');
 
 /* Apenas lembrando que podemos usar o router como o app do express, que fizemos em nosso módulo de entrada (server.js):
 router.get('/', (req, res) => {});*/
@@ -20,9 +20,9 @@ const courseRouter = require('./courses');
 router.use('/:bootcampId/courses', courseRouter); // Vindo de courses;
 
 // Abaixo estamos configurando as nossas rotas a partir da url setada no módulo de entrada:
-router.route('/').get(advancedResults(Bootcamp, 'courses'), getBootcamps).post(protect, createBootcamp);
-router.route('/:id').get(getBootcamp).put(protect, updateBootcamp).delete(protect, deleteBootcamp);
+router.route('/').get(advancedResults(Bootcamp, 'courses'), getBootcamps).post(protect, authorize('publisher', 'admin'), createBootcamp);
+router.route('/:id').get(getBootcamp).put(protect, authorize('publisher', 'admin'), updateBootcamp).delete(protect, authorize('publisher', 'admin'), deleteBootcamp);
 router.route('/radius/:zipcode/:distance').get(getBootcampsInRadius);
-router.route('/:id/photo').put(protect, fileupload);
+router.route('/:id/photo').put(protect, authorize('publisher', 'admin'), fileupload);
 
 module.exports = router;

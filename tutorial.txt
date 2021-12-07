@@ -162,3 +162,13 @@ Por fim, criamos o 'usuário' na requisição, com os dados do usuário identifi
 Para proteger as rotas com o nosso novo middleware, precisamos primeiro trazer o método criado 'protect', e passá-lo como o primeiro parâmetro das rotas geradas.
 
 Com o usuário logado, criamos um novo método de 'verificar o usuário logado atual', em 'controllers' > 'auth.js'.
+
+Até o momento, estamos fizendo o login do usuário de forma manual no Postman, criando um item de 'Authorization' dentro do 'header' das solicitações, entretanto, o Postman possui outras ferramentas que podemos usar para automitizar o processo.
+Dentro da rota de login e de registro do postman, na aba 'Tests', podemos criar mais uma variável de ambiente contendo o valor do token obtido do usuário que acabou de ser logado no sistema.
+Criação da variável:
+-- pm.enviroment.set("token", pm.response.json().token)
+Agora, com o usuário logado automaticamente, podemos usar a aba 'Authorization' do postman, e usar a autenticação por 'Bearer' e indiciar nossa variavel como parâmetro.
+
+Um outro procedimento de segurança que deve ser implementado é a segregação de função dentro do sistema, ou seja, os acessos dos usuários 'users' são diferentes dos usuários 'publishers', que são diferentes dos 'admins' (feito em 'middleware' > 'auth.js').
+. OBS: Na implementação usamos o conceito de 'higher order function', que é uma função que retorna ou recebe uma outra função como argumento.
+A ideia da função 'authorize' é passá-la as rotas, com as informações de quais roles que queremos que o acesso seja liberado, as demais roles não serão aceitas.

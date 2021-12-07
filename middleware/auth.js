@@ -34,3 +34,12 @@ exports.protect = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse('Acesso não autorizado !', 401));
     }
 });
+
+// Segregação de função das roles:
+// OBS: Utilização de uma 'high order function'.
+exports.authorize = (...roles) => (req, res, next) => {
+    if(!roles.includes(req.user.role)) {
+        return next(new ErrorResponse(`Usuários com a role '${req.user.role}' não podem executar esta ação !`, 401));
+    }
+    return next();
+};
