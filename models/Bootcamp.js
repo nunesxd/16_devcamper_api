@@ -98,6 +98,12 @@ const BootcampSchema = new mongoose.Schema({
       createdAt: {
         type: Date,
         default: Date.now
+      },
+      // Abaixo criamos um link com o schema dos usuários:
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: true
       }
 },{
   // Abaixo, estamos configurando o uso dos 'virtuals', que é uma forma de 'populate' reverso, ou seja, iremos mostrar os dados dos courses dentro dos bootcamps:

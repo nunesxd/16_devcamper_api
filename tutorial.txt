@@ -172,3 +172,9 @@ Agora, com o usuário logado automaticamente, podemos usar a aba 'Authorization'
 Um outro procedimento de segurança que deve ser implementado é a segregação de função dentro do sistema, ou seja, os acessos dos usuários 'users' são diferentes dos usuários 'publishers', que são diferentes dos 'admins' (feito em 'middleware' > 'auth.js').
 . OBS: Na implementação usamos o conceito de 'higher order function', que é uma função que retorna ou recebe uma outra função como argumento.
 A ideia da função 'authorize' é passá-la as rotas, com as informações de quais roles que queremos que o acesso seja liberado, as demais roles não serão aceitas.
+
+Outra implementação que pode ser interessante é a criação de um relacionamento entre os bootcamps e os usuários, de forma que podemos criar a ideia de pertencimento dos usuários com as suas publicações.
+No caso, saberemos quais usuários criaram quais bootcamps.
+Em 'models' > 'Bootcamp.js', criamos um campo representando o respectivo usuário, campo similar ao que foi criado para linkar 'Course' com o 'Bootcamp'.
+Esta inserção também foi feita no método de criação de bootcamp, em 'controllers' > 'bootcamps', criando automaticamente o link do usuário logado com o bootcamp que está sendo criado. Também fazemos um check quanto a uma outra necessidade de desenvolvimento, que apenas um 'admin' seja capaz de publicar mais de um bootcamp, um 'publisher' só pode um.
+Outra alteração necessária foi a da inclusão do modelo de 'User' dentro do módulo do 'seeder.js', que antes ignorava as informações dos usuários.
