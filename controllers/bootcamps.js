@@ -30,6 +30,16 @@ exports.getBootcamp = asyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/bootcamps;
 // @access  Private
 exports.createBootcamp = asyncHandler(async (req, res, next) => {
+    // Adiciona o usuário logado ao corpo da solicitação recebida pelo HTTP do Postman:
+    req.body.user = req.user.id;
+
+    // Se o usuário não for admin, ele só poderá adicionar um bootcamp:
+    const publishedBootcamp = await Bootcamp.findOne({ user: req.user.id });
+
+    if(publishedBootcamp && req.user.role !== 'admin') {
+        return next(new ErrorResponse(`O usuário de ID '${req.user.id}' já fez uma publicação !`, 400));
+    }
+
     const bootcamp = await Bootcamp.create(req.body);
 
     res.status(201).json({ success: true, data: bootcamp });
