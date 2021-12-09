@@ -178,3 +178,5 @@ No caso, saberemos quais usuários criaram quais bootcamps.
 Em 'models' > 'Bootcamp.js', criamos um campo representando o respectivo usuário, campo similar ao que foi criado para linkar 'Course' com o 'Bootcamp'.
 Esta inserção também foi feita no método de criação de bootcamp, em 'controllers' > 'bootcamps', criando automaticamente o link do usuário logado com o bootcamp que está sendo criado. Também fazemos um check quanto a uma outra necessidade de desenvolvimento, que apenas um 'admin' seja capaz de publicar mais de um bootcamp, um 'publisher' só pode um.
 Outra alteração necessária foi a da inclusão do modelo de 'User' dentro do módulo do 'seeder.js', que antes ignorava as informações dos usuários.
+
+Uma outra implementação de segurança seria limitar o acesso dos usuários aos bootcamps e cursos que não foram criados por eles mesmos, a ideia é que apenas o usuário criador dos bootcamps e dos cursos podem alterá-los posteriormente. Para isso, alteramos os métodos de 'update', 'delete' e 'photo upload' em 'controllers', para ambos 'bootcamps' e 'courses'.

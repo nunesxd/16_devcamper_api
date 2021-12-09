@@ -50,14 +50,21 @@ exports.createBootcamp = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.updateBootcamp = asyncHandler(async (req, res, next) => {
     // As '{}' correspondem as opções deste método, no caso, ele irá retornar o item depois deste ser atualizado (new), e irá checar as informações enviadas com o schema (runValidators):
-    const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true
-    });
+    let bootcamp = await Bootcamp.findById(req.params.id);
 
     if(!bootcamp) {
         return next(new ErrorResponse(`Não foi possível identificar o Bootcamp de ID num: ${req.params.id}`, 404));   
     }
+
+    // Checa se o usuário logado é o mesmo que criou o bootcamp, somente este e o admin podem alterá-lo:
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return next(new ErrorResponse(`O usuário '${req.user.id}' não possui acesso a este bootcamp.`, 404));
+    }
+
+    bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    });
 
     res.status(200).json({ success: true, data: bootcamp });
 })
@@ -71,6 +78,11 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
 
     if(!bootcamp) {
         return next(new ErrorResponse(`Não foi possível identificar o Bootcamp de ID num: ${req.params.id}`, 404));    
+    }
+
+    // Checa se o usuário logado é o mesmo que criou o bootcamp, somente este e o admin podem alterá-lo:
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return next(new ErrorResponse(`O usuário '${req.user.id}' não possui acesso a este bootcamp.`, 404));
     }
 
     // Necessário devido a implementação do cascade delete:
@@ -118,6 +130,11 @@ exports.fileupload = asyncHandler(async (req, res, next) => {
 
     if(!bootcamp) {
         return next(new ErrorResponse(`Não foi possível identificar o Bootcamp de ID num: ${req.params.id}`, 404));    
+    }
+
+    // Checa se o usuário logado é o mesmo que criou o bootcamp, somente este e o admin podem alterá-lo:
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return next(new ErrorResponse(`O usuário '${req.user.id}' não possui acesso a este bootcamp.`, 404));
     }
 
     // Verifica se existe uma foto para upload:
