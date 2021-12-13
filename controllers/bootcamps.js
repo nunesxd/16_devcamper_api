@@ -3,7 +3,7 @@
 const Bootcamp = require('../models/Bootcamp');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
-const geocoder = require('../utils/geocoder');
+// const geocoder = require('../utils/geocoder');
 const path = require('path');
 
 // @desc    Obtem todos os bootcamps;
@@ -94,32 +94,32 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
 // @desc    Verifica os bootcamps que estão próximos, de acordo com o raio (km);
 // @route   GET /api/v1/bootcamps/radius/:zipcode/:distance;
 // @access  Private
-exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
-    const {zipcode, distance} = req.params;
+// exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
+//     const {zipcode, distance} = req.params;
 
-    // Utilizamos o geocode para traduzir os dados fornecidos na URL:
-    const loc = await geocoder.geocode(zipcode);
-    const lat = loc[0].latitude;
-    const lon = loc[0].longitude;
+//     // Utilizamos o geocode para traduzir os dados fornecidos na URL:
+    // const loc = await geocoder.geocode(zipcode);
+    // const lat = loc[0].latitude;
+    // const lon = loc[0].longitude;
 
-    /* Calculo do raio, a partir dos dados da URL.
-    Calculo: raio / raio da terra;
-    Raio da terra: 6.378 km*/
-    const radius = distance / 6378;
+//     /* Calculo do raio, a partir dos dados da URL.
+//     Calculo: raio / raio da terra;
+//     Raio da terra: 6.378 km*/
+//     const radius = distance / 6378;
 
-    // Pesquisamos em nosso DB, pelos bootcamps próximos ao local que estipulamos, em Km:
-    const bootcamps = await Bootcamp.find({
-        // Usamos o método '$geoWithin', '$centerSphere' do geocoder, para verificar o bootcamp mais próximo:
-        location: {$geoWithin: { $centerSphere: [ [ lon, lat ], radius ] } }
-    });
+//     // Pesquisamos em nosso DB, pelos bootcamps próximos ao local que estipulamos, em Km:
+//     const bootcamps = await Bootcamp.find({
+//         // Usamos o método '$geoWithin', '$centerSphere' do geocoder, para verificar o bootcamp mais próximo:
+//         location: {$geoWithin: { $centerSphere: [ [ lon, lat ], radius ] } }
+//     });
 
-    // Por fim, enviamos a resposta com os bootcamps encontrados:
-    res.status(200).json({
-        success: true,
-        count: bootcamps.length,
-        results: bootcamps
-    });
-});
+//     // Por fim, enviamos a resposta com os bootcamps encontrados:
+//     res.status(200).json({
+//         success: true,
+//         count: bootcamps.length,
+//         results: bootcamps
+//     });
+// });
 
 
 // @desc    Upload de fotos para um bootcamp;

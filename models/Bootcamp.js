@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const geocoder = require('../utils/geocoder');
+// const geocoder = require('../utils/geocoder');
 
 // Ao criar o Schema, podemos atribuir algumas configurações aos campos, usando o '{}', assim como RegEx (e podemos anexar um texto, caso a expressão seja recusada, assim como no caso de required), se deve ser "trim", tamanho máximo do campo, GeoJSON (biblioteca que permite identificar um endereço geograficamente) etc.
 const BootcampSchema = new mongoose.Schema({
@@ -121,25 +121,25 @@ BootcampSchema.pre('save', function(next) {
 });
 
 // Inicializa o Geocode, e preenche automaticamente o campo 'location':
-BootcampSchema.pre('save', async function(next) {
-  const loc = await geocoder.geocode(this.address);
-  // Queremos transformar nosso campo em um objeto do Geocode, com as suas opções:
-  this.location = {
-    type: 'Point',
-    coordinates: [loc[0].longitude, loc[0].latitude],
-    formattedAddress: loc[0].formattedAddress,
-    street: loc[0].streetName,
-    city: loc[0].city,
-    state: loc[0].stateCode,
-    zipcode: loc[0].zipcode,
-    country: loc[0].countryCode
-  }
+// BootcampSchema.pre('save', async function(next) {
+//   const loc = await geocoder.geocode(this.address);
+//   // Queremos transformar nosso campo em um objeto do Geocode, com as suas opções:
+//   this.location = {
+//     type: 'Point',
+//     coordinates: [loc[0].longitude, loc[0].latitude],
+//     formattedAddress: loc[0].formattedAddress,
+//     street: loc[0].streetName,
+//     city: loc[0].city,
+//     state: loc[0].stateCode,
+//     zipcode: loc[0].zipcode,
+//     country: loc[0].countryCode
+//   }
 
-  // Como definimos o endereço já formatado acima, não precisamos mais do endereço providenciado pelo cliente. Lembrando que o MongoDB é NoSQL, se um campo não for informado, e este não for necessário, ele simplesmente não é adicionado ao banco:
-  this.address = undefined;
+//   // Como definimos o endereço já formatado acima, não precisamos mais do endereço providenciado pelo cliente. Lembrando que o MongoDB é NoSQL, se um campo não for informado, e este não for necessário, ele simplesmente não é adicionado ao banco:
+//   this.address = undefined;
 
-  next();
-});
+//   next();
+// });
 
 // Introdução do 'Cascade Delete', uma forma de garantirmos que todos os respectivos bootcamps sejam deletados caso os cursos sejam deletados:
 BootcampSchema.pre('remove', async function (next) {

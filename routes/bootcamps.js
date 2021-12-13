@@ -22,7 +22,7 @@ router.use('/:bootcampId/courses', courseRouter); // Vindo de courses;
 // Abaixo estamos configurando as nossas rotas a partir da url setada no módulo de entrada:
 router.route('/').get(advancedResults(Bootcamp, 'courses'), getBootcamps).post(protect, authorize('publisher', 'admin'), createBootcamp);
 router.route('/:id').get(getBootcamp).put(protect, authorize('publisher', 'admin'), updateBootcamp).delete(protect, authorize('publisher', 'admin'), deleteBootcamp);
-router.route('/radius/:zipcode/:distance').get(getBootcampsInRadius);
+// router.route('/radius/:zipcode/:distance').get(getBootcampsInRadius);
 router.route('/:id/photo').put(protect, authorize('publisher', 'admin'), fileupload);
 
 module.exports = router;
