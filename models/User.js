@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -38,6 +39,11 @@ const UserSchema = new mongoose.Schema({
 
 // Encripração da senha do usuário usando 'bcryptjs':
 UserSchema.pre('save', async function(next) {
+    // Caso estejamos salvando outras informações, que não sejam senha, no usuário, passamos adiante:
+    if(!this.isModified('password')) {
+        next();
+    }
+
     // Geração da hash, 10 é o número de complexidade recomendado:
     const salt = await bcrypt.genSalt(10);
 
@@ -54,6 +60,21 @@ UserSchema.methods.getSignedJwtToken = function() {
 // Valida a senha inserida no login, com a senha encriptada no BD:
 UserSchema.methods.matchPassword = async function(enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Cria e criptografa o token de solicitação de senha gerado:
+UserSchema.methods.getResetPassToken = async function(enteredPassword) {
+    
+    // Gera o token utilizando a biblioteca 'crypto':
+    const resetToken = crypto.randomBytes(20).toString('hex');
+
+    // Criptografa o token gerado e o armazena no campo 'resetPasswordToken' do modelo:
+    this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    // Define a data de expiração do token:
+    this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+    return resetToken;
 };
 
 module.exports = mongoose.model('User', UserSchema);

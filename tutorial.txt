@@ -69,6 +69,7 @@ Existe um outro tipo de 'middleware', que pode ser chamado antes e / ou depois d
 O schema do Mongoose também possui algumas funções próprias, como:
 1) O 'aggregate', que retorna uma promisse, recebe um pipeline '[]', que nada mais é que uma sequência de comandos que deve ser seguida (Exemplo no modelo 'Course.js'), e que no fim nos gera um objeto segundo essa sequência de comandos executada no BD;
 2) O 'constructor', como nas demais linguagens, nos permite executar algo no momento da criação do objeto, de sua inicialização. (Exemplo no modelo 'Course.js');
+3) [model].isModified('[campo do modelo]'), que verifica se o campo informado foi alterado na respectiva instância (Exemplo no modelo 'User.js');
 
 Nos métodos CRUD presentes no 'controllers.js', podemos disponibilizar 'queries' dentro da nossa URL (devemos começar a query por '?', separando os campos com '&'), para que o mongoose use no 'find()', procurando os registros dentro da base de dados.
 Cabe mencionar, que estas queries precisam de uma "tradução" para serem usadas pelo JSON, por exemplo, devemos inserir o caractere '$' em casos de "menor do que X valor", pois o mongoose não realiza tal procedimento, e considera que o valor informado é uma ID, causando erro.
@@ -109,6 +110,8 @@ Para podermos lidar com os modelos criados pelo Mongoose podemos usar, sendo tod
 . OBS: Cabe mencionar que o populate pode ser simples, especificando apenas o modelo, como 'bootcamp', ou se quisermos algo mais específico, devemos passar um objeto, como no exemplo acima.
 5) [model].find()
 - Procura os registros com o que for informado, podemos criar uma query e passar para o find, por exemplo;
+6) [model].isModified('[campo do modelo]');
+- Verifica se o campo informado foi alterado na respectiva instância;
 
 Instalamos o app 'express-fileupload'. Criamos no 'controllers' > 'bootcamps' a funcionlidade de upload de fotos para o bootcamp que for informado. Em seguida criamos a respectiva rota para a funcionalidade, testando por fim no Postman.
 Configuramos o body no Postman como 'form-data', criamos o campo 'file', com o tipo 'file', e selecionamos a imagem para enviar ao servidor.
@@ -184,3 +187,9 @@ Uma outra implementação de segurança seria limitar o acesso dos usuários aos
 - OBS: Desabilitamos o GEOCODE pois está apresentando um erro de certificado, caso o erro seja solucionado, a funcionalidade será reintegrada.
 
 A próxima funcionalidade que queremos adicionar ao projeto é a possibilidade de resetar a senha dos usuários, a ideia é que o usuário envie um e-mail requisitando o reset da senha.
+A funcionalidade ficará dentro de 'controllers' > método 'forgotPassword'. Usaremos o e-mail em que o usuário enviou a requisição para identifica-lo na base.
+Dentro de 'models' > 'User', iremos criar uma funcionalidade de geração de token para este caso de reset de senha, este método será utilizado pelo controller para a funcionalidade. Usaremos a biblioteca 'crypto' para criptografar o token de solicitação de troca de senha gerado e definimos o tempo de 10 minutos para a expiração do token, exemplo de utilização do 'crypto':
+-- crypto.randomBytes([numero de bytes para gerar]).toString('[tipo de string]');
+Neste caso, devemos informar o tamanho, em bytes, do token a ser gerado, este método nos retorna um buffer, que devemos traduzir em uma string.
+-- crypto.createHash('[algoritmo de criptografia]').update([token gerado]).digest('[tipo de string]');
+Comando de criptografia relativo ao token gerado.

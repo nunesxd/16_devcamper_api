@@ -2,6 +2,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const User = require('../models/User');
 
+
 // @desc    Registra um usuário;
 // @route   POST /api/v1/auth/register;
 // @access  Public
@@ -50,6 +51,40 @@ exports.login = asyncHandler(async (req, res, next) => {
 });
 
 
+// @desc    Verifica o usuário logado;
+// @route   POST /api/v1/auth/me;
+// @access  Private
+exports.getMe = asyncHandler(async (req, res, next) => {
+    const user = await User.findById(req.user.id);
+
+    res.status(200).json({
+        success: true,
+        data: user
+    });
+});
+
+
+// @desc    Esqueceu a senha;
+// @route   POST /api/v1/auth/forgotpassword;
+// @access  Public
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
+    const user = await User.findOne({ email:req.body.email });
+
+    if(!user) {
+        return next(new ErrorResponse('Usuário não identificado, por favor, inserir outro e-mail !', 404));
+    };
+
+    const resetToken = user.getResetPassToken();
+
+    await user.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+        success: true,
+        data: user
+    });
+});
+
+
 // Obtem token, cria o cookie e envia a resposta:
 const sendTokenResponse = (user, res, statusCode) => {
     // Cria o token JWT, método de nosso modelo:
@@ -70,15 +105,3 @@ const sendTokenResponse = (user, res, statusCode) => {
 
     res.status(statusCode).cookie('token', token, options).json({ success: true, token });
 };
-
-// @desc    Verifica o usuário logado;
-// @route   POST /api/v1/auth/me;
-// @access  Private
-exports.getMe = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.user.id);
-
-    res.status(200).json({
-        success: true,
-        data: user
-    });
-});
