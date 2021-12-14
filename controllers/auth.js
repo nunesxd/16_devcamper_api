@@ -1,4 +1,5 @@
 const ErrorResponse = require('../utils/errorResponse');
+const sendEmail = require('../utils/sendEmail');
 const asyncHandler = require('../middleware/async');
 const User = require('../models/User');
 
@@ -78,10 +79,32 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    res.status(200).json({
-        success: true,
-        data: user
-    });
+    // Cria url do reset:
+    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/resetPassword/${resetToken}`;
+
+    const message = `Email de solicitação de reset de senha. Por favor, realize um PUT request para o endereço: \n\n ${resetUrl}`;
+
+    try {
+        await sendEmail({
+            email: user.email,
+            subject: 'Password reset token',
+            message: message
+        });
+
+        res.status(200).json({
+            success: true,
+            data: 'Email enviado'
+        });
+    } catch (err) {
+        console.log(err);
+        // Caso não seja possível enviar o email, teremos de recomeçar o processo de reset de senha.
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+
+        await user.save({ validateBeforeSave: false });
+
+        return next(new ErrorResponse('Email não pode ser enviado !', 500));
+    }
 });
 
 

@@ -193,3 +193,7 @@ Dentro de 'models' > 'User', iremos criar uma funcionalidade de geração de tok
 Neste caso, devemos informar o tamanho, em bytes, do token a ser gerado, este método nos retorna um buffer, que devemos traduzir em uma string.
 -- crypto.createHash('[algoritmo de criptografia]').update([token gerado]).digest('[tipo de string]');
 Comando de criptografia relativo ao token gerado.
+
+Além da geração do token relativo ao reset de senha, também iremos enviar um e-mail de confirmação ao usuário, a biblioteca que iremos usar para isso é o 'nodemailer', para testar o nosso serviço, iremos usar o 'mailtrap', que é um servidor falso de smtp.
+Primeiro, adicionamos algumas configurações básicas em nosso 'config.env', e criamos o nosso módulo central da funcionalidade, que está em 'utils' > 'sendEmail.js'.
+Por fim atualizamos o método 'forgotPassword' em 'controllers' para enviar o e-mail ao usuário solicitante do reset de senha.

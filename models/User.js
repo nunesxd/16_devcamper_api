@@ -63,7 +63,7 @@ UserSchema.methods.matchPassword = async function(enteredPassword) {
 };
 
 // Cria e criptografa o token de solicitação de senha gerado:
-UserSchema.methods.getResetPassToken = async function(enteredPassword) {
+UserSchema.methods.getResetPassToken = function() {
     
     // Gera o token utilizando a biblioteca 'crypto':
     const resetToken = crypto.randomBytes(20).toString('hex');
