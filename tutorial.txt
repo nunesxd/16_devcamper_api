@@ -197,3 +197,10 @@ Comando de criptografia relativo ao token gerado.
 Além da geração do token relativo ao reset de senha, também iremos enviar um e-mail de confirmação ao usuário, a biblioteca que iremos usar para isso é o 'nodemailer', para testar o nosso serviço, iremos usar o 'mailtrap', que é um servidor falso de smtp.
 Primeiro, adicionamos algumas configurações básicas em nosso 'config.env', e criamos o nosso módulo central da funcionalidade, que está em 'utils' > 'sendEmail.js'.
 Por fim atualizamos o método 'forgotPassword' em 'controllers' para enviar o e-mail ao usuário solicitante do reset de senha.
+
+30_05_2022
+A próxima implementação é a de reset do usuário, dentro de: 'controllers' > 'auth.js', método 'resetPassword'. Precisamos do módulo do 'crypto' para podermos realizar essa tarefa, ele foi importado no início do arquivo, como os demais.
+A ideia neste caso é de resetar o usuário referente ao token gerado e passado por parâmetro via API. Outro ponto que queremos garantir é que a solicitação do reset senha maior que hoje, para garantir que a solicitação seja recente (lembrando o código: '$gt: Date.now()', '$gt' significa 'greater then', e o 'Date.now()' apenas pega a data atual).
+Para testar a implementação usamos o 'Postman' para enviar o pedido de reset de senha, método 'forgotPassword', e depois pegamos o e-mail de reset que foi enviado para o nosso 'mailtrap' vinculado ao nosso usuário do GitHub.
+A URL presente no e-mail deve ser colocada novamente no 'Postman', método '', onde enviamos nosso JSON com o body apresentando nossa nova senha.
+Mas para que o processo funcione, devemos adicionar a nova funcionalidade a rota 'auth.js'.

@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const ErrorResponse = require('../utils/errorResponse');
 const sendEmail = require('../utils/sendEmail');
 const asyncHandler = require('../middleware/async');
@@ -80,7 +81,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
 
     // Cria url do reset:
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/resetPassword/${resetToken}`;
+    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/resetpassword/${resetToken}`;
 
     const message = `Email de solicitação de reset de senha. Por favor, realize um PUT request para o endereço: \n\n ${resetUrl}`;
 
@@ -105,6 +106,32 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
         return next(new ErrorResponse('Email não pode ser enviado !', 500));
     }
+});
+
+
+// @desc    Reset do usuário;
+// @route   POST /api/v1/auth/resetpassword/:resettoken;
+// @access  Public
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+    // Obtem o token hased:
+    const resetPasswordToken = crypto.createHash('sha256').update(req.params.resettoken).digest('hex');
+
+    const user = await User.findOne({
+        resetPasswordToken,
+        resetPasswordExpire: { $gt: Date.now() }
+    });
+
+    if(!user){
+        return next(new ErrorResponse('Token inválido !', 400));
+    }
+
+    // Caso o usuário seja identificado, resetamos sua senha e a solicitação de reset:
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    sendTokenResponse(user, res, 200);
 });
 
 
