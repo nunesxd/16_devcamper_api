@@ -204,3 +204,18 @@ A ideia neste caso é de resetar o usuário referente ao token gerado e passado 
 Para testar a implementação usamos o 'Postman' para enviar o pedido de reset de senha, método 'forgotPassword', e depois pegamos o e-mail de reset que foi enviado para o nosso 'mailtrap' vinculado ao nosso usuário do GitHub.
 A URL presente no e-mail deve ser colocada novamente no 'Postman', método '', onde enviamos nosso JSON com o body apresentando nossa nova senha.
 Mas para que o processo funcione, devemos adicionar a nova funcionalidade a rota 'auth.js'.
+
+01_06_2022
+Desta vez iremos criar uma nova rota para alterar os dados do usuário, que será um método dentro de 'controllers' > 'auth.js', a alteração da senha do usuário foi feita em uma rota diferente desta.
+Como queremos que apenas os dados de 'nome' e 'e-mail' do usuário possam ser alterados, iremos usar a desconstrução do request para pegar exatamente esses dados. Se passassemos o 'req.body' todo, até a senha poderia ser alterada assim, mas para ela queremos algumas medidas de segurança, implementadas em seu próprio método.
+. OBS: Também utilizamos o middleware 'protect' neste método http.
+. OBS2: No 'Postman' devemos colocar a opção de 'Authorization' para utilizar o 'token' que é gerado no momento do login do usuário, a opção para isso é a 'Bearer Token'.
+
+Agora iremos criar o método de update da senha do usuário.
+Para este item, queremos que o usuário informe tanto a senha antiga quanto a senha nova, para então podermos mudar a sua senha para a que foi requisitada, para isso usamos:
+-- .select('+password')
+. O 'select' fica inativo se não utilizarmos.
+Para validação utilizamos o método de 'matchPassword' próprio do objeto 'usuário':
+-- if(!(await user.matchPassword(req.body.currentPassword))) {
+. O método em questão é assincrono, por isso devemos esperar sua resposta.
+Por fim enviaremos um token respectivo a troca de senha.

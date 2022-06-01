@@ -66,6 +66,46 @@ exports.getMe = asyncHandler(async (req, res, next) => {
 });
 
 
+// @desc    Update da senha do usuário;
+// @route   PUT /api/v1/auth/updatepassword;
+// @access  Private
+exports.updatePassword = asyncHandler(async (req, res, next) => {
+    // Solicitamos o password antigo para validar a troca:
+    const user = await User.findById(req.user.id).select('+password');
+
+    // Validamos se a senha bate com a atual:
+    if(!(await user.matchPassword(req.body.currentPassword))) {
+        return next(new ErrorResponse('Senha atual está errada !', 401));
+    }
+
+    user.password = req.body.newPassword;
+    await user.save();
+
+    sendTokenResponse(user, res, 200);
+});
+
+
+// @desc    Update dos detalhes do usuário;
+// @route   PUT /api/v1/auth/updatedetails;
+// @access  Private
+exports.updateDetails = asyncHandler(async (req, res, next) => {
+    const fieldsToUpdate = {
+        name: req.body.name,
+        email: req.body.email
+    };
+
+    const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+        new: true,
+        runValidators: true
+    });
+
+    res.status(200).json({
+        success: true,
+        data: user
+    });
+});
+
+
 // @desc    Esqueceu a senha;
 // @route   POST /api/v1/auth/forgotpassword;
 // @access  Public
