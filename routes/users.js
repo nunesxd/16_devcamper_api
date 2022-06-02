@@ -1,8 +1,8 @@
 const express = require('express'); 
-const {getCourses, getCourse, addCourse, updateCourse, deleteCourse} = require('../controllers/courses');
+const {getUsers, getUser, createUser, updateUser, deleteUser} = require('../controllers/users');
 
 // Advanced Queries middleware:
-const Course = require('../models/Course');
+const User = require('../models/User');
 const advancedResults = require('../middleware/advancedResults');
 // Middleware de proteção, verificação dos tokens dos usuários. Deve ser passado como primeiro argumento das rotas:
 const {protect, authorize} = require('../middleware/auth');
@@ -11,9 +11,16 @@ const {protect, authorize} = require('../middleware/auth');
 const router = express.Router({ mergeParams: true });
 
 // Rotas:
+
+router.use(protect);
+router.use(authorize('admin'));
+
 router.route('/')
-    .get(advancedResults(Course, { path: 'bootcamp', select: 'name description' }), getCourses)
-    .post(protect, authorize('publisher', 'admin'), addCourse);
-router.route('/:id').get(getCourse).put(protect, authorize('publisher', 'admin'), updateCourse).delete(protect, authorize('publisher', 'admin'), deleteCourse);
+    .get(advancedResults(User), getUsers)
+    .post(createUser);
+router.route('/:id')
+    .get(getUser)
+    .put(updateUser)
+    .delete(deleteUser);
 
 module.exports = router;

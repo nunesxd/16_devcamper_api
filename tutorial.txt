@@ -219,3 +219,17 @@ Para validação utilizamos o método de 'matchPassword' próprio do objeto 'usu
 -- if(!(await user.matchPassword(req.body.currentPassword))) {
 . O método em questão é assincrono, por isso devemos esperar sua resposta.
 Por fim enviaremos um token respectivo a troca de senha.
+
+02_06_2022
+A última implementação referente a autenticação será a de CRUD (Create, Read, Update, Delete) dos usuários da API, este acesso será realizado por um admin apenas.
+Nas pastas 'routes' e 'controllers', criamos o módulo 'users.js'. Dentro de 'controllers', criamos os métodos, onde todos serão privados e só para admins: 
+1) GET de todos os usuários do sistema;
+2) GET de um usuário;
+3) CREATE de um novo usuário, diferente do registro feito no módulo de autenticação;
+Também não devemos esquecer de trazer a nova rota para o módulo principal, 'server.js'.
+Usamos novamente o middleware 'advancedResults.js' para enviar os resultados. 
+Utilizamos uma estratégia para preencher as autenticações, sem precisar copiar o código diversas vezes, como foi feito anteriormente:
+-- router.use(protect);
+. Assim todas as rotas definidas abaixo usarão o protect e o authorize especificado.
+Lembrando que esses middlewares de proteção precisam que o 'postman' tenha o 'authorize' como 'bearer token', para que este possa identificar o usuário como sendo admin.
+. OBS: A criação de um novo usuário pelo admin também deve encriptar a senha do usuário informada no corpo da solicitação do 'postman', visto que utilizamos o modelo de 'user' que possui o middleware de encriptação de senha.
