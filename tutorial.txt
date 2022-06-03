@@ -233,3 +233,8 @@ Utilizamos uma estratégia para preencher as autenticações, sem precisar copia
 . Assim todas as rotas definidas abaixo usarão o protect e o authorize especificado.
 Lembrando que esses middlewares de proteção precisam que o 'postman' tenha o 'authorize' como 'bearer token', para que este possa identificar o usuário como sendo admin.
 . OBS: A criação de um novo usuário pelo admin também deve encriptar a senha do usuário informada no corpo da solicitação do 'postman', visto que utilizamos o modelo de 'user' que possui o middleware de encriptação de senha.
+
+03_06_2022
+Agora seguiremos com a criação do recurso de reviews, para isso precisamos criar os 'models', 'controllers' e 'routes' respectivos.
+Lembrando que iremos utilizar o 'merge parameters' com os bootcamps que temos, visto que uma review estará sempre atrelada a um.
+. OBS: A opção de merge deve estar abilitada na rota de reviews e a rota de reviews deve ser importada pela de bootcamps.
