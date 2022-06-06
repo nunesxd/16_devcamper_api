@@ -240,4 +240,8 @@ Lembrando que iremos utilizar o 'merge parameters' com os bootcamps que temos, v
 . OBS: A opção de merge deve estar abilitada na rota de reviews e a rota de reviews deve ser importada pela de bootcamps.
 
 06_06_2022
-A próxima funcionalidade que queremos é a de obtenção dos reviews específicos por id. Um outro ponto que queremos atualizar é a dos seeders, onde queremos que os reviews pré-estabelecidos sejam adicionados ao nosso banco de dados. 
+A próxima funcionalidade que queremos é a de obtenção dos reviews específicos por id. Um outro ponto que queremos atualizar é a dos seeders, onde queremos que os reviews pré-estabelecidos sejam adicionados ao nosso banco de dados.
+O próximo passo é permitir que um usuário, ou admin, seja capaz de adicionar uma review a um bootcamp.
+. OBS: Queremos que um usuário possa adicionar apenas uma review a um bootcamp específico, podemos garantir isso atualizando nosso 'model' de 'review' e adicionar no final do arquivo o código:
+-- ReviewSchema.index({ bootcamp: 1, user: 1 }, { unique: true });
+. A opção de 'unique' serve para garantir que o bootcamp só pode ter um review para aquele usuário. 
