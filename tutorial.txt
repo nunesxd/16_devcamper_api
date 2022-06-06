@@ -238,3 +238,6 @@ Lembrando que esses middlewares de proteção precisam que o 'postman' tenha o '
 Agora seguiremos com a criação do recurso de reviews, para isso precisamos criar os 'models', 'controllers' e 'routes' respectivos.
 Lembrando que iremos utilizar o 'merge parameters' com os bootcamps que temos, visto que uma review estará sempre atrelada a um.
 . OBS: A opção de merge deve estar abilitada na rota de reviews e a rota de reviews deve ser importada pela de bootcamps.
+
+06_06_2022
+A próxima funcionalidade que queremos é a de obtenção dos reviews específicos por id. Um outro ponto que queremos atualizar é a dos seeders, onde queremos que os reviews pré-estabelecidos sejam adicionados ao nosso banco de dados. 
