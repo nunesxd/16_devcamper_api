@@ -60,14 +60,15 @@ CourseSchema.statics.getAvgCost = async function(bootcampId) {
         }
     ]);
     
-    console.log(obj);
+    /* Teste do calculo do valor agregado:
+    console.log(obj);*/
 
     try {
         await this.model('Bootcamp').findByIdAndUpdate(bootcampId, {
             averageCost: Math.ceil(obj[0].averageCost / 10) * 10
         });
-        console.log("Executou o update do valor agregado do bootcamp !!!");
-        console.log('Valor: ' + Math.ceil(obj[0].averageCost / 10) * 10);
+        // console.log("Executou o update do valor agregado do bootcamp !!!");
+        // console.log('Valor: ' + Math.ceil(obj[0].averageCost / 10) * 10);
     } catch (err) {
         console.error(err);
     }

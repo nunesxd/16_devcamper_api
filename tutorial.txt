@@ -244,4 +244,7 @@ A próxima funcionalidade que queremos é a de obtenção dos reviews específic
 O próximo passo é permitir que um usuário, ou admin, seja capaz de adicionar uma review a um bootcamp.
 . OBS: Queremos que um usuário possa adicionar apenas uma review a um bootcamp específico, podemos garantir isso atualizando nosso 'model' de 'review' e adicionar no final do arquivo o código:
 -- ReviewSchema.index({ bootcamp: 1, user: 1 }, { unique: true });
-. A opção de 'unique' serve para garantir que o bootcamp só pode ter um review para aquele usuário. 
+. A opção de 'unique' serve para garantir que o bootcamp só pode ter um review para aquele usuário.
+
+07_06_2022
+Também queremos que a média de reviews seja calculada para cada bootcamp, utilizamos o mesmo conceito utilizado no model de 'courses'.
