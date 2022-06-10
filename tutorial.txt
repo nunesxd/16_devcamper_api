@@ -248,3 +248,7 @@ O próximo passo é permitir que um usuário, ou admin, seja capaz de adicionar 
 
 07_06_2022
 Também queremos que a média de reviews seja calculada para cada bootcamp, utilizamos o mesmo conceito utilizado no model de 'courses'.
+
+10_06_2022
+Agora iremos finalizar o desenvolvimento do módulo de reviews, com a adição dos métodos de update e deleção de reviews realizados.
+Importante salientar que apenas o usuário que realizou o review, ou um admin, tem permissão de realizar tanto a sua alteração com o a deleção.
