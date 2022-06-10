@@ -66,6 +66,22 @@ exports.getMe = asyncHandler(async (req, res, next) => {
 });
 
 
+// @desc    Logout de um usuário e reset dos cookies;
+// @route   GET /api/v1/auth/logout;
+// @access  Private
+exports.logout = asyncHandler(async (req, res, next) => {
+    // Reset do cookie pelo middleware:
+    res.cookie('token', 'none', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    });
+
+    res.status(200).json({
+        success: true
+    });
+});
+
+
 // @desc    Update da senha do usuário;
 // @route   PUT /api/v1/auth/updatepassword;
 // @access  Private

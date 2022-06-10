@@ -252,3 +252,8 @@ Também queremos que a média de reviews seja calculada para cada bootcamp, util
 10_06_2022
 Agora iremos finalizar o desenvolvimento do módulo de reviews, com a adição dos métodos de update e deleção de reviews realizados.
 Importante salientar que apenas o usuário que realizou o review, ou um admin, tem permissão de realizar tanto a sua alteração com o a deleção.
+Com isso a implementação das funcionalidades básicas da API está completa ! Os próximos passos serão relacionados a segurança.
+
+Em 'middleware' > 'auth.js', reabilitamos a opção de uso do token de usuário salvo em cookie, e não apenas o uso do token que está pela opção de 'Bearer Token'.
+A primeira funcionalidade que implementaremos relativa a segurança seria a de logout do usuário e reset dos cookies salvos no browser. Este método será desenvolvido dentro de 'controllers' > 'auth.js', adicionando a funcionalidade em 'routes' > 'auth.js' e no Postman.
+- OBS: Em 'middleware' > 'auth.js', se deixarmos a opção de cookies ativada, a autenticação será feita por cookie, caso não, será feita apenas pelo 'Bearer Token'. Esta decisão é mais pessoal, não existe um erro ou acerto !

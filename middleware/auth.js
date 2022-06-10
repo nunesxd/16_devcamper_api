@@ -11,10 +11,10 @@ exports.protect = asyncHandler(async (req, res, next) => {
         // Pegamos apenas o token no final da string:
         token = req.headers.authorization.split(' ')[1];
     }
-
     // Caso não tenha, pegamos os usuários através dos cookies no browser, essa funcionalidade será usada apenas em produção:
-    // else if() {
-    // }
+    else if(req.cookies.token) {
+        token = req.cookies.token;
+    }
 
     // Validação da existência do token do usuário:
     if(!token) {
