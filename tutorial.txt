@@ -256,4 +256,25 @@ Com isso a implementação das funcionalidades básicas da API está completa ! 
 
 Em 'middleware' > 'auth.js', reabilitamos a opção de uso do token de usuário salvo em cookie, e não apenas o uso do token que está pela opção de 'Bearer Token'.
 A primeira funcionalidade que implementaremos relativa a segurança seria a de logout do usuário e reset dos cookies salvos no browser. Este método será desenvolvido dentro de 'controllers' > 'auth.js', adicionando a funcionalidade em 'routes' > 'auth.js' e no Postman.
-- OBS: Em 'middleware' > 'auth.js', se deixarmos a opção de cookies ativada, a autenticação será feita por cookie, caso não, será feita apenas pelo 'Bearer Token'. Esta decisão é mais pessoal, não existe um erro ou acerto !
+- OBS: Em 'middleware' > 'auth.js', se deixarmos a opção de cookies ativada, a autenticação será feita por cookie, caso não, será feita apenas pelo 'Bearer Token'. Esta decisão é mais pessoal e profissional, não existe um erro ou acerto !
+- OBS2: Artigo falando mais sobre o tema de login e logout: https://dzone.com/articles/security-best-practices-for-managing-api-access-to
+
+13_06_2022
+A próxima implementação de segurança é relacionada a proteção de NoSql injection e sanitização dos dados dentro do banco.
+Pelo Postman, através do método de login que foi criado, podemos usar o NoSQL injection para adivinhar o usuário e a senha, embora em nosso sistema a nossa senha seja criptografada, o hacker ainda pode tentar adivinhar as senhas e tentar o login, como no exemplo abaixo:
+-- {
+--    "email": {"$gt":""},
+--    "password": "123456"
+-- }
+Existem algumas opções neste caso, poderíamos usar o pacote 'mongo-sanitize', sendo o ponto negativo, a necessidade de fazer a sanitização em todos os campos que gostaríamos da funcionalidade.
+Um outro pacote seria o 'express-mongo-sanitize', que funcionaria como um middleware, sanitizando todos os campos do banco.
+Utilizamos este último pela facilidade e comodidade, utilizando o middleware dentro do módulo 'server.js'.
+
+Outra adição que queremos é a de demais cabeçalhos, ou headers, do express, aumentando mais a segurança da API, previnindo assim 'cross site scripting' dentre outras falhas.
+Lembrando que todos os pacotes serão instalados no módulo 'server.js'. Um dos pacotes utilizado é o 'helmet'.
+. OBS: Podemos ver seu funcionamento pelo Postman, caso executemos um dos métodos e formos em 'headers', podemos ver todos os novos headers adicionados pelo pacote.
+O segundo pacote é o 'xss-clean', que também serve para cross site scripting. Como por exemplo, adicionar um tag de 'script' dentro de um dos campos, como o nome de um bootcamp, desta forma o script estaria inserido dentro do HTML do site.
+Ao criar um novo bootcamp:
+-- "name": "TESTE BOOTCAMP<script>alert(1)</script>",
+Utilizando o pacote 'xss-clean', depois de criado no banco:
+-- "name": "TESTE BOOTCAMP&lt;script>alert(1)&lt;/script>",

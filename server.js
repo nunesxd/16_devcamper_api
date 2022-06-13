@@ -5,6 +5,9 @@ dotenv.config({ path: './config/config.env' });
 const express = require('express');
 const fileupload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
+const xss_clean = require('xss-clean');
 const path = require('path');
 const bootcamps = require('./routes/bootcamps'); // Arquivo de rotas.
 const courses = require('./routes/courses');
@@ -35,6 +38,15 @@ app.use(fileupload());
 
 // Manipulação de cookies:
 app.use(cookieParser());
+
+// Sanitização dos dados:
+app.use(mongoSanitize());
+
+// Configuração de headers de segurança:
+app.use(helmet());
+
+// Proteção contra cross site scripting:
+app.use(xss_clean());
 
 // Arquivos estáticos:
 app.use(express.static(path.join(__dirname, 'public')));
