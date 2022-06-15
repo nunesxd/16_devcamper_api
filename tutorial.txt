@@ -278,3 +278,13 @@ Ao criar um novo bootcamp:
 -- "name": "TESTE BOOTCAMP<script>alert(1)</script>",
 Utilizando o pacote 'xss-clean', depois de criado no banco:
 -- "name": "TESTE BOOTCAMP&lt;script>alert(1)&lt;/script>",
+
+15_06_2022
+Outras implementações complementares que serão realizadas, seriam a de limitação de requests, proteção conta HPP e CORS.
+Para o limitador utilizaremos a biblioteca 'express-rate-limit', que nos limita a quantidade de requests que nossa API pode receber, nos protegendo assim contra ataques DDOS.
+Para o HPP (Http Parameter Polution) utilizaremos a biblioteca 'hpp', que é apenas um middleware que precisa ser ativado e nada mais, o restante é gerenciado pela biblioteca.
+Para o problema de CORS (Cross Origin Resource Sharing), que é ocasionando quando fazemos a solicitação em um domínio diferente do qual a API está configurada (No caso não estamos tendo pois o Postman lida adequadamente com isso), usamos a biblioteca de mesmo nome 'cors', utilizando-a da mesma forma no 'server.js', assim como as demais.
+
+Finalizada as implementações de segurança, a próxima etapa é final, de documentação do processo e deploy em produção, que será feito em seguida.
+
+
