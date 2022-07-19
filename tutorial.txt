@@ -287,4 +287,20 @@ Para o problema de CORS (Cross Origin Resource Sharing), que é ocasionando quan
 
 Finalizada as implementações de segurança, a próxima etapa é final, de documentação do processo e deploy em produção, que será feito em seguida.
 
+Podemos usar o Postman para gerar uma documentação básica de nosso projeto, contendo as descrições e demais observações feitas no app, mas também iremos gerar um front end básico com o que colocamos na API, para isso podemos usar a biblioteca 'docgen'.
+Esta simples documentação e links da nossa API estará disponível na raíz da API, que poderá ser acessada pelo browser.
+Criamos um novo ambiente para conter os dados de produção, este ambiente será uma cópia do que foi feito até o momento. Para criar um novo ambiente é só ir em 'environments' na aba da esquerda do app.
+Customizamos a URL de localhost + porta, para 'devcamper.io'.
+Agora iremos publicar a documentação, selecione 'collections' na aba da esquerda, clicar em reticências e depois em 'view documentation', isto te levará para uma página que irá conter as configurações do site.
+Selecione o environment como o de produção e depois é só clicar em 'Publish' e pronto.
+Com isso temos nossa documentação publicada em uma URL acessível:
+-- https://documenter.getpostman.com/view/17015391/UzBiQpVT
 
+- OBS: O código CURL que é apresentado pode ser usado em um cmd qualquer, neste caso não irá funcionar pois ainda estamos disponibilizando a API somente no localhost, mas se o trocarmos irá funcionar normalmente, exemplo:
+-- curl --location --request GET 'http://devcamper.io/api/v1/bootcamps/'
+-- curl --location --request GET 'http://localhost:5000/api/v1/bootcamps/'
+
+19_07_2022
+Utilizamos o 'docgen' para gerar um html do nosso código e assim podermos apresentá-lo no nosso próprio site, na raiz da nossa URL.
+Também podemos fazer um readme como documentação interna, para uso no github.
+Utilizamos a biblioteca 'PM2' para deixar o servidor em aberto e executando.
